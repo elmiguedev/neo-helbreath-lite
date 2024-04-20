@@ -1,5 +1,8 @@
 export default {
+  server: {
+    port: 3001
+  },
   build: {
-    outDir: 'public',
+    outDir: '../../dist/public',
   }
 }
