@@ -2,9 +2,7 @@
   "name": "io-game-template",
   "version": "1.0.0",
   "scripts": {
-    "dev:server": "nodemon src/server/index.ts -r dotenv/config",
-    "dev:client": "vite src/client",
-    "dev": "concurrently --kill-others \"pnpm dev:client\" \"pnpm dev:server\"",
+    "dev": "concurrently --kill-others \"vite src/client\" \"nodemon src/server/index.ts -r dotenv/config\"",
     "build": "tsc -p ./src/server  && vite build src/client",
     "start": "node -r dotenv/config dist/index.js"
   },
