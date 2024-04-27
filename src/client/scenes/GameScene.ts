@@ -28,22 +28,30 @@ export class GameScene extends Scene {
   }
 
   private createBackground() {
-    this.add.grid(0, 0, 2048, 2048, 32, 32, 0xffffff, 1, 0xcccccc);
+    this.cameras.main.setBackgroundColor(0xffffff)
+    this.add.grid(0, 0, 2048, 2048, 32, 32, 0xffffff, 1, 0xcccccc).setDepth(-3000);
   }
 
   private createInput() {
     this.input.on("pointerdown", (pointer, gameObjects: any[]) => {
-      if (gameObjects.length > 0) { return; }
-      this.socketManager.notifyPlayerMove({
-        x: pointer.worldX,
-        y: pointer.worldY
-      });
+      if (gameObjects.length > 0) {
+        if (gameObjects.length === 1) {
+          const playerEntity: PlayerEntity = gameObjects[0];
+          this.socketManager.notifyPlayerAttack(playerEntity.getId());
+        }
+      } else {
+        this.socketManager.notifyPlayerMove({
+          x: pointer.worldX,
+          y: pointer.worldY
+        });
+      }
     });
   }
 
   private updatePlayers() {
     for (const id in this.players) {
-      this.players[id].update();
+      if (this.players[id])
+        this.players[id].update();
     }
   }
 

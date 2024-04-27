@@ -1,7 +1,7 @@
 import io, { Socket } from "socket.io-client";
 import { GameStateHandler } from "./handlers/GameStateHandler";
 import { GameState } from "../../domain/GameState";
-import { GAME_STATE_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE } from "../../domain/Messages";
+import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE } from "../../domain/Messages";
 import { Position } from "../../domain/Position";
 import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler";
 import { PlayerEntity } from "../entities/PlayerEntity";
@@ -22,7 +22,7 @@ export class SocketManager {
   ) {
     this.socket = io(SERVER_URL);
     this.socket.on("connect", () => {
-      this.gameStateHandler = new GameStateHandler(this.socket.id, this.scene, this.players);
+      this.gameStateHandler = new GameStateHandler(this, this.scene, this.players);
       this.playerDisconnectedHandler = new PlayerDisconnectedHandler(this.players);
       this.socket.on(GAME_STATE_MESSAGE, this.gameStateHandler.execute.bind(this.gameStateHandler));
       this.socket.on(PLAYER_DISCONNECTED_MESSAGE, this.playerDisconnectedHandler.execute.bind(this.playerDisconnectedHandler))
@@ -38,5 +38,15 @@ export class SocketManager {
     if (this.socket.connected) {
       this.socket.emit(PLAYER_MOVE_MESSAGE, position)
     }
+  }
+
+  public notifyPlayerAttack(id: string) {
+    if (this.socket.connected) {
+      this.socket.emit(PLAYER_ATTACK_MESSAGE, id);
+    }
+  }
+
+  public disconnect() {
+    this.socket.disconnect();
   }
 }

@@ -8,5 +8,5 @@ export interface Player {
   maxHp: number;
   position: Position;
   targetPosition?: Position;
-  state: 'idle' | 'walk' | 'attack';
+  state: 'idle' | 'walk' | 'attack' | 'hurt' | 'dead';
 }

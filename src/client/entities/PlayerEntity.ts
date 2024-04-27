@@ -1,8 +1,11 @@
 import { Player } from "../../domain/Player";
+import { StatBar } from "../components/StatBar";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
   private playerLabel: Phaser.GameObjects.Text;
+  private hpBar: StatBar;
+  public onDie?: Function;
 
   constructor(scene: Phaser.Scene, playerState: Player) {
     super(scene, playerState.position.x, playerState.position.y, "player");
@@ -13,20 +16,36 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     this.anims.createFromAseprite("player");
     this.setInteractive({ cursor: "pointer" });
     this.createLabel();
+    this.createHpBar()
   }
 
   public update() {
-    this.updateAnimations();
-    this.updatePosition();
-    this.updateLabel();
+    if (this.active && this.visible) {
+      this.updatePosition();
+      this.updateAnimations();
+      this.updateLabel();
+      this.updateHpBar();
+    }
+  }
+
+  public getId() {
+    return this.playerState.id;
   }
 
   public setPlayerState(playerState: Player) {
     this.playerState = playerState;
   }
 
+  public destroy(): void {
+    super.destroy(true);
+    this.playerLabel.destroy(true)
+    this.hpBar.destroy(true);
+  }
+
   private updateAnimations() {
     switch (this.playerState.state) {
+      case 'dead': this.die(); break;
+      case 'hurt': this.playHurtAnimation(); break;
       case 'walk': this.playWalkAnimation(); break;
       case 'attack': this.playAttackAnimation(); break;
       case 'idle':
@@ -55,7 +74,15 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playAttackAnimation() {
     this.play({
       key: "attack",
-      frameRate: 5,
+      timeScale: 0.3,
+      repeat: -1,
+    }, true);
+  }
+
+  private playHurtAnimation() {
+    this.play({
+      key: "hurt",
+      timeScale: 0.3,
       repeat: -1,
     }, true);
   }
@@ -69,8 +96,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private updateLabel() {
-    if (this.playerLabel) {
-      this.playerLabel.setPosition(this.x, this.y - 40);
+    if (this.playerLabel && this.playerLabel.active) {
+      this.playerLabel.setPosition(this.x, this.y - 60);
       this.playerLabel.setText(`${this.playerState.name} (${this.playerState.state})`);
     }
   }
@@ -81,5 +108,27 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     if (this.playerState.targetPosition) {
       this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
     }
+  }
+
+  private createHpBar() {
+    this.hpBar = new StatBar(
+      this.scene,
+      this.x,
+      this.y,
+      0x00ff00,
+      this.playerState.maxHp,
+      this.playerState.hp
+    )
+  }
+
+  private updateHpBar() {
+    if (this.hpBar && this.hpBar.active) {
+      this.hpBar.setPosition(this.x - 25, this.y - 40);
+      this.hpBar.setValue(this.playerState.hp);
+    }
+  }
+
+  private die() {
+    if (this.onDie) this.onDie();
   }
 }

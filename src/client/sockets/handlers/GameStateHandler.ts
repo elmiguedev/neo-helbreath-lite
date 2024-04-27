@@ -3,10 +3,11 @@ import { GAME_STATE_MESSAGE } from "../../../domain/Messages";
 import { GameState } from "../../../domain/GameState";
 import { PlayerEntity } from "../../entities/PlayerEntity";
 import { Scene } from "phaser";
+import { SocketManager } from "../SocketManager";
 
 export class GameStateHandler {
   constructor(
-    private readonly id: string,
+    private readonly socketManager: SocketManager,
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>
   ) { }
@@ -16,11 +17,21 @@ export class GameStateHandler {
       const player = gameState.players[key];
       if (!this.players[key]) {
         this.players[key] = new PlayerEntity(this.scene, player);
-        if (key === this.id) {
+        if (key === this.socketManager.getId()) {
           this.scene.cameras.main.startFollow(this.players[key]);
+          this.players[key].onDie = () => {
+            this.socketManager.disconnect();
+            this.scene.scene.restart();
+          }
+        } else {
+          this.players[key].onDie = () => {
+            this.players[key].destroy();
+            delete this.players[key];
+          }
         }
       } else {
-        this.players[key].setPlayerState(player);
+        if (this.players[key])
+          this.players[key].setPlayerState(player);
       }
     });
   }

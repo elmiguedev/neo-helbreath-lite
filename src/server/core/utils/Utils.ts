@@ -1,3 +1,5 @@
+import { Position } from "../../../domain/Position"
+
 const getRandomHexColor = (): number => {
   return Math.floor(Math.random() * 16777215)
 }
@@ -47,11 +49,30 @@ const distanceBetweenPoints = (x1: number, y1: number, x2: number, y2: number) =
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+const distanceBetween = (entity:Position, target:Position) => {
+  return distanceBetweenPoints(
+    entity.x,
+    entity.y,
+    target.x,
+    target.y
+  );
+}
+
+const throwDice = (count:number, faces:number) => {
+  let sum = 0;
+  for (let i = 0; i < count; i++) {
+    sum += getRandomIntBetween(1, faces);
+  }
+  return sum;
+}
+
 export const Utils = {
   getRandomHexColor,
   getRandomPositionByRadius,
   getRandomIntBetween,
   constantLerpPosition,
   lerpPosition,
-  distanceBetweenPoints
+  distanceBetweenPoints,
+  distanceBetween,
+  throwDice
 }

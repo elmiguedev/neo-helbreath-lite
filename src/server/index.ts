@@ -6,10 +6,11 @@ import { CreatePlayerAction } from "./core/actions/CreatePlayerAction";
 import { GameStateEvent } from "./core/events/GameStateEvent";
 import { RemovePlayerAction } from "./core/actions/RemovePlayerAction";
 import { GameState } from "../domain/GameState";
-import { GAME_STATE_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE } from "../domain/Messages";
+import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE } from "../domain/Messages";
 import { PlayerMoveAction } from "./core/actions/PlayerMoveAction";
 import { Position } from "../domain/Position";
 import { UpdatePlayersAction } from "./core/actions/UpdatePlayersAction";
+import { PlayerAttackAction, PlayerAttackActionParams } from "./core/actions/PlayerAttackAction";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -31,6 +32,7 @@ const createPlayerAction = new CreatePlayerAction(gameState);
 const removePlayerAction = new RemovePlayerAction(gameState);
 const playerMoveAction = new PlayerMoveAction(gameState);
 const updatePlayersAction = new UpdatePlayersAction(gameState);
+const playerAttackAction = new PlayerAttackAction(gameState);
 const gameStateEvent = new GameStateEvent(gameState);
 
 // creamos la conexion por socket
@@ -46,6 +48,13 @@ socketServer.on("connection", (socket: Socket) => {
 
   socket.on(PLAYER_MOVE_MESSAGE, (position: Position) => {
     playerMoveAction.execute({ id: socket.id, position });
+  });
+
+  socket.on(PLAYER_ATTACK_MESSAGE, (id:string) => {
+    playerAttackAction.execute({
+      playerId: socket.id,
+      enemyId: id
+    });
   })
 });
 

@@ -10,6 +10,9 @@ export class UpdatePlayersAction implements Action<void, void> {
 
   public execute(): void {
     Object.values(this.gameState.players).forEach((player) => {
+      if (player.state === "dead") return;
+      if (player.state === "attack") return;
+      if (player.state === "hurt") return;
       if (player.targetPosition) {
         player.state = "walk";
         player.position = Utils.constantLerpPosition(
@@ -29,6 +32,11 @@ export class UpdatePlayersAction implements Action<void, void> {
           player.position = player.targetPosition
           player.targetPosition = undefined;
         }
+        if (player.position.y <= -1024) player.position.y = -1024;
+        if (player.position.x <= -1024) player.position.x = -1024;
+        if (player.position.y >= 1024) player.position.y = 1024;
+        if (player.position.x >= 1024) player.position.x = 1024;
+
       } else {
         player.state = "idle";
       }
