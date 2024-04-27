@@ -1,5 +1,6 @@
 import { Game } from "phaser";
-import { StartScene } from "./scenes/StartScene";
+import { GameScene } from "./scenes/GameScene";
+import { BootloaderScene } from "./scenes/BootloaderScene";
 
 export default new Game({
   type: Phaser.AUTO,
@@ -11,5 +12,11 @@ export default new Game({
     width: 600,
     height: 600
   },
-  scene: [StartScene]
+  render: {
+    pixelArt: true
+  },
+  scene: [
+    BootloaderScene,
+    GameScene
+  ]
 })

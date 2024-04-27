@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "scripthost"
+    ],
+    "moduleResolution": "Node",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "typeRoots": [
+      "node_module/phaser/types",
+      "declarations"
+    ],
+    "paths": {
+      "~/*": [
+        "./*"
+      ]
+    },
+  },
+  "include": [
+    "src/**/*",
+    "declarations.d.ts",
+    "vite.config.js"
+  ]
+}
