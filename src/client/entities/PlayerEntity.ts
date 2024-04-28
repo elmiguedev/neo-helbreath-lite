@@ -5,6 +5,9 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
   private playerLabel: Phaser.GameObjects.Text;
   private hpBar: StatBar;
+  private walkSound: Phaser.Sound.BaseSound;
+  private hurtSound: Phaser.Sound.BaseSound;
+
   public onDie?: Function;
 
   constructor(scene: Phaser.Scene, playerState: Player) {
@@ -17,6 +20,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     this.setInteractive({ cursor: "pointer" });
     this.createLabel();
     this.createHpBar()
+    this.createSounds();
   }
 
   public update() {
@@ -64,6 +68,10 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private playWalkAnimation() {
+    if (!this.walkSound.isPlaying) {
+      this.walkSound.play({ delay: 0.15 });
+    }
+
     this.play({
       key: "walk",
       timeScale: 0.7,
@@ -72,6 +80,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private playAttackAnimation() {
+    this.setFlipX(this.scene.input.mousePointer.worldX < this.x);
     this.play({
       key: "attack",
       timeScale: 0.3,
@@ -80,6 +89,9 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private playHurtAnimation() {
+    if (!this.hurtSound.isPlaying) {
+      this.hurtSound.play({ delay: 0.1 });
+    }
     this.play({
       key: "hurt",
       timeScale: 0.3,
@@ -90,7 +102,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private createLabel() {
     this.playerLabel = this.scene.add.text(this.x, this.y - 40, this.playerState.name, {
       color: "black",
-      fontSize: "16px",
+      fontFamily: "Roboto",
+      fontSize: "24px",
       align: "center"
     }).setOrigin(0.5, 0.5);
   }
@@ -98,7 +111,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private updateLabel() {
     if (this.playerLabel && this.playerLabel.active) {
       this.playerLabel.setPosition(this.x, this.y - 60);
-      this.playerLabel.setText(`${this.playerState.name} (${this.playerState.state})`);
+      this.playerLabel.setText(`${this.playerState.name}`);
+      this.playerLabel.setDepth(this.depth);
     }
   }
 
@@ -124,11 +138,17 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private updateHpBar() {
     if (this.hpBar && this.hpBar.active) {
       this.hpBar.setPosition(this.x - 25, this.y - 40);
+      this.hpBar.setDepth(this.depth);
       this.hpBar.setValue(this.playerState.hp);
     }
   }
 
   private die() {
     if (this.onDie) this.onDie();
+  }
+
+  private createSounds() {
+    this.walkSound = this.scene.sound.add("walk", { volume: 1 });
+    this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
   }
 }

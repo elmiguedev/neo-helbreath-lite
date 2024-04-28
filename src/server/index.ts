@@ -39,7 +39,7 @@ const gameStateEvent = new GameStateEvent(gameState);
 socketServer.on("connection", (socket: Socket) => {
   createPlayerAction.execute({
     id: socket.id,
-    name: socket.id
+    name: socket.handshake.query.name as string || "Player"
   });
   socket.on("disconnect", () => {
     removePlayerAction.execute({ id: socket.id });
@@ -50,7 +50,7 @@ socketServer.on("connection", (socket: Socket) => {
     playerMoveAction.execute({ id: socket.id, position });
   });
 
-  socket.on(PLAYER_ATTACK_MESSAGE, (id:string) => {
+  socket.on(PLAYER_ATTACK_MESSAGE, (id: string) => {
     playerAttackAction.execute({
       playerId: socket.id,
       enemyId: id

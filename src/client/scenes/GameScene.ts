@@ -7,14 +7,20 @@ import { GameState } from "../../domain/GameState";
 export class GameScene extends Scene {
   private socketManager: SocketManager;
   private players: Record<string, PlayerEntity> = {};
+  private playerName: string;
 
   constructor() {
     super("GameScene");
   }
 
+  init(data: any) {
+    this.playerName = data.name;
+  }
+
   create() {
     this.createSocketManager();
     this.createBackground();
+    this.createMusic();
     this.createInput();
   }
 
@@ -24,7 +30,7 @@ export class GameScene extends Scene {
 
   createSocketManager() {
     this.players = {}
-    this.socketManager = new SocketManager(this, this.players);
+    this.socketManager = new SocketManager(this, this.players, this.playerName);
   }
 
   private createBackground() {
@@ -53,6 +59,14 @@ export class GameScene extends Scene {
       if (this.players[id])
         this.players[id].update();
     }
+  }
+
+  private createMusic() {
+    this.sound.stopAll();
+    this.sound.play("game", {
+      loop: true,
+      volume: 0.2
+    });
   }
 
 }

@@ -19,8 +19,13 @@ export class SocketManager {
   constructor(
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>,
+    private readonly playerName: string
   ) {
-    this.socket = io(SERVER_URL);
+    this.socket = io(SERVER_URL, {
+      query: {
+        name: this.playerName
+      }
+    });
     this.socket.on("connect", () => {
       this.gameStateHandler = new GameStateHandler(this, this.scene, this.players);
       this.playerDisconnectedHandler = new PlayerDisconnectedHandler(this.players);
