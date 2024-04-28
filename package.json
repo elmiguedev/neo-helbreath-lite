@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "concurrently --kill-others \"vite src/client\" \"nodemon src/server/index.ts -r dotenv/config\"",
     "build": "tsc -p ./src/server  && vite build src/client",
-    "start": "node -r dotenv/config dist/index.js"
+    "start": "node -r dotenv/config dist/server/index.js"
   },
   "dependencies": {
     "express": "^4.19.2",
@@ -20,6 +20,8 @@
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
-    "vite": "^5.2.9"
+    "vite": "^5.2.9",
+    "vite-plugin-copy": "^0.1.6",
+    "vite-plugin-static-copy": "^1.0.3"
   }
 }

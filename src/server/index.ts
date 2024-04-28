@@ -76,7 +76,7 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 })
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 // ejecutamos el server
 server.listen(port, () => {

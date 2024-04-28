@@ -5,7 +5,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
   private playerLabel: Phaser.GameObjects.Text;
   private hpBar: StatBar;
-  private walkSound: Phaser.Sound.BaseSound;
   private hurtSound: Phaser.Sound.BaseSound;
 
   public onDie?: Function;
@@ -68,10 +67,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private playWalkAnimation() {
-    if (!this.walkSound.isPlaying) {
-      this.walkSound.play({ delay: 0.15 });
-    }
-
     this.play({
       key: "walk",
       timeScale: 0.7,
@@ -148,7 +143,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private createSounds() {
-    this.walkSound = this.scene.sound.add("walk", { volume: 1 });
     this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
   }
 }
