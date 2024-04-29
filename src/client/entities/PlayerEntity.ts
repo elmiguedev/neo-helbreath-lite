@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { Player } from "../../domain/Player";
 import { StatBar } from "../components/StatBar";
 import { Position } from "../../domain/Position";
+import { Utils } from "../utils/Utils";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
@@ -26,6 +27,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   public update() {
     if (this.active && this.visible) {
+      this.predictPosition();
       this.updatePosition();
       this.updateAnimations();
       this.updateLabel();
@@ -118,14 +120,24 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private updatePosition() {
-    this.predictPosition();
-    const l = Phaser.Math.LinearXY(
-      new Phaser.Math.Vector2(this.x, this.y),
-      new Phaser.Math.Vector2(this.playerState.position.x, this.playerState.position.y),
-      0.3
-    );
-    this.setPosition(l.x, l.y);
-    // this.setPosition(this.playerState.position.x, this.playerState.position.y);
+
+    if (this.playerState.targetPosition) {
+
+      const sDistance = Utils.distanceBetween(this.playerState.position, this.playerState.targetPosition);
+      const cDistance = Utils.distanceBetween(this, this.playerState.targetPosition);
+
+      if (sDistance <= cDistance) {
+        this.setPosition(this.playerState.position.x, this.playerState.position.y);
+      }
+      // this.setPosition(this.playerState.position.x, this.playerState.position.y);
+
+    } else {
+      this.setPosition(this.playerState.position.x, this.playerState.position.y);
+
+    }
+
+
+
     this.setDepth(this.playerState.position.y);
     if (this.playerState.targetPosition) {
       this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
@@ -161,12 +173,19 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private predictPosition() {
     if (this.playerState.targetPosition) {
-      const l = Phaser.Math.LinearXY(
-        new Phaser.Math.Vector2(this.x, this.y),
-        new Phaser.Math.Vector2(this.playerState.targetPosition.x, this.playerState.targetPosition.y),
-        0.02
-      );
-      this.setPosition(l.x, l.y);
+      const distance = Utils.distanceBetween(this, this.playerState.targetPosition);
+      if (distance > 4) {
+
+        const l = Utils.constantLerpPosition(
+          this.x,
+          this.y,
+          this.playerState.targetPosition.x,
+          this.playerState.targetPosition.y,
+          2
+        );
+        this.setPosition(l.x, l.y);
+      }
+
     }
   }
 
