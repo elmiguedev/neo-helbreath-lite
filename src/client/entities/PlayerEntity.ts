@@ -1,8 +1,5 @@
-import Phaser from "phaser";
 import { Player } from "../../domain/Player";
 import { StatBar } from "../components/StatBar";
-import { Position } from "../../domain/Position";
-import { Utils } from "../utils/Utils";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
@@ -27,7 +24,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   public update() {
     if (this.active && this.visible) {
-      this.predictPosition();
       this.updatePosition();
       this.updateAnimations();
       this.updateLabel();
@@ -47,10 +43,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     super.destroy(true);
     this.playerLabel.destroy(true)
     this.hpBar.destroy(true);
-  }
-
-  public setTargetPosition(position: Position) {
-    this.playerState.targetPosition = position;
   }
 
   private updateAnimations() {
@@ -120,24 +112,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private updatePosition() {
-
-    if (this.playerState.targetPosition) {
-
-      const sDistance = Utils.distanceBetween(this.playerState.position, this.playerState.targetPosition);
-      const cDistance = Utils.distanceBetween(this, this.playerState.targetPosition);
-
-      if (sDistance <= cDistance) {
-        this.setPosition(this.playerState.position.x, this.playerState.position.y);
-      }
-      // this.setPosition(this.playerState.position.x, this.playerState.position.y);
-
-    } else {
-      this.setPosition(this.playerState.position.x, this.playerState.position.y);
-
-    }
-
-
-
+    this.setPosition(this.playerState.position.x, this.playerState.position.y);
     this.setDepth(this.playerState.position.y);
     if (this.playerState.targetPosition) {
       this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
@@ -170,23 +145,4 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private createSounds() {
     this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
   }
-
-  private predictPosition() {
-    if (this.playerState.targetPosition) {
-      const distance = Utils.distanceBetween(this, this.playerState.targetPosition);
-      if (distance > 4) {
-
-        const l = Utils.constantLerpPosition(
-          this.x,
-          this.y,
-          this.playerState.targetPosition.x,
-          this.playerState.targetPosition.y,
-          2
-        );
-        this.setPosition(l.x, l.y);
-      }
-
-    }
-  }
-
 }
