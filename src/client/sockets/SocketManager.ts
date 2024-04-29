@@ -41,7 +41,6 @@ export class SocketManager {
 
   public notifyPlayerMove(position: Position) {
     if (this.socket.connected && this.socket.id) {
-      const entity = this.players[this.socket.id].setTargetPosition(position);
       this.socket.emit(PLAYER_MOVE_MESSAGE, position)
     }
   }
