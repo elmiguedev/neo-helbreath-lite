@@ -1,5 +1,7 @@
+import Phaser from "phaser";
 import { Player } from "../../domain/Player";
 import { StatBar } from "../components/StatBar";
+import { Position } from "../../domain/Position";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
@@ -43,6 +45,10 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     super.destroy(true);
     this.playerLabel.destroy(true)
     this.hpBar.destroy(true);
+  }
+
+  public setTargetPosition(position: Position) {
+    this.playerState.targetPosition = position;
   }
 
   private updateAnimations() {
@@ -112,7 +118,14 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private updatePosition() {
-    this.setPosition(this.playerState.position.x, this.playerState.position.y);
+    this.predictPosition();
+    const l = Phaser.Math.LinearXY(
+      new Phaser.Math.Vector2(this.x, this.y),
+      new Phaser.Math.Vector2(this.playerState.position.x, this.playerState.position.y),
+      0.3
+    );
+    this.setPosition(l.x, l.y);
+    // this.setPosition(this.playerState.position.x, this.playerState.position.y);
     this.setDepth(this.playerState.position.y);
     if (this.playerState.targetPosition) {
       this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
@@ -145,4 +158,16 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private createSounds() {
     this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
   }
+
+  private predictPosition() {
+    if (this.playerState.targetPosition) {
+      const l = Phaser.Math.LinearXY(
+        new Phaser.Math.Vector2(this.x, this.y),
+        new Phaser.Math.Vector2(this.playerState.targetPosition.x, this.playerState.targetPosition.y),
+        0.02
+      );
+      this.setPosition(l.x, l.y);
+    }
+  }
+
 }
