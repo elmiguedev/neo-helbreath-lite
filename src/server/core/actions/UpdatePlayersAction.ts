@@ -13,6 +13,7 @@ export class UpdatePlayersAction implements Action<void, void> {
       if (player.state === "dead") return;
       if (player.state === "attack") return;
       if (player.state === "hurt") return;
+      if (player.state === "absorb") return;
       if (player.targetPosition) {
         player.state = "walk";
         player.position = Utils.constantLerpPosition(

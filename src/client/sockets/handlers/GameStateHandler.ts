@@ -28,7 +28,9 @@ export class GameStateHandler {
           }
         } else {
           this.players[key].onDie = () => {
-            this.players[key].destroy();
+            if (this.players[key]) {
+              this.players[key].destroy();
+            }
             delete this.players[key];
           }
         }

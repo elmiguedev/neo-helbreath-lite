@@ -8,6 +8,6 @@ export interface Player {
   maxHp: number;
   position: Position;
   targetPosition?: Position;
-  state: 'idle' | 'walk' | 'attack' | 'hurt' | 'dead';
+  state: 'idle' | 'walk' | 'attack' | 'hurt' | 'dead' | 'absorb';
   score: number;
 }

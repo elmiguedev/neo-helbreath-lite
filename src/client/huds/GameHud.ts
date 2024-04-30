@@ -38,9 +38,11 @@ export class GameHud extends Scene {
   private updatePlayers() {
     if (!this.gameState) return;
     let players = "";
-    Object.values(this.gameState.players).forEach((player) => {
-      players += `${player.name}: ${player.score}\n`;
-    })
+    Object.values(this.gameState.players)
+      .sort((a, b) => b.score - a.score)
+      .forEach((player) => {
+        players += `${player.name}: ${player.score}\n`;
+      })
     this.txtPlayers.setText(players);
   }
 }

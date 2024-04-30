@@ -50,6 +50,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
       case 'hurt': this.playHurtAnimation(); break;
       case 'walk': this.playWalkAnimation(); break;
       case 'attack': this.playAttackAnimation(); break;
+      case 'absorb': this.playAbsorbAnimation(); break;
       case 'idle':
       default:
         this.playIdleAnimation();
@@ -88,6 +89,22 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     }
     this.play({
       key: "hurt",
+      timeScale: 0.3,
+      repeat: -1,
+    }, true);
+  }
+
+  private playDeadAnimation() {
+    this.play({
+      key: "dead",
+      timeScale: 0.3,
+      repeat: -1,
+    }, true);
+  }
+
+  private playAbsorbAnimation() {
+    this.play({
+      key: "absorb",
       timeScale: 0.3,
       repeat: -1,
     }, true);
@@ -138,7 +155,14 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private die() {
-    if (this.onDie) this.onDie();
+    this.playDeadAnimation();
+    this.scene.time.addEvent({
+      delay: 5000,
+      callback: () => {
+        if (this.onDie) this.onDie();
+      }
+    })
+
   }
 
   private createSounds() {

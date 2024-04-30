@@ -24,6 +24,7 @@ export class TextField extends Phaser.GameObjects.Container {
     this.txt.style.textAlign = "center";
     this.txt.style.width = "200px";
     this.txt.style.height = "42px";
+    this.txt.maxLength = 24;
     this.txt.onkeydown = (event) => {
       if (event.key === "Enter") {
         if (this.onKeyEnter) {
