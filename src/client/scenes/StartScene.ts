@@ -17,7 +17,8 @@ export class StartScene extends Scene {
   }
 
   private createBackground() {
-    this.add.grid(0, 0, 2048, 2048, 32, 32, 0xffffff, 1, 0xcccccc);
+    this.cameras.main.setBackgroundColor(0xffffff);
+    this.add.grid(0, 0, 2048, 2048, 32, 32, 0xffffff, 1, 0xdddddd).setOrigin(0);
   }
 
   private createNameTextField() {

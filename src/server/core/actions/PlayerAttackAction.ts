@@ -53,6 +53,8 @@ export class PlayerAttackAction implements Action<PlayerAttackActionParams, void
 
 
 
+      } else {
+        player.targetPosition = enemy.position
       }
     }
   }

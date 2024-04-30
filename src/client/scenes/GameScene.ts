@@ -41,7 +41,7 @@ export class GameScene extends Scene {
 
   private createBackground() {
     this.cameras.main.setBackgroundColor(0xffffff)
-    this.add.grid(0, 0, 2048, 2048, 32, 32, 0xffffff, 1, 0xcccccc).setDepth(-3000);
+    this.add.grid(0, 0, 2048, 2048, 32, 32, 0xffffff, 1, 0xdddddd).setDepth(-3000);
   }
 
   private createInput() {
