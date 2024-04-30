@@ -1,5 +1,5 @@
 import { GameState } from "../../../domain/GameState";
-import { PLAYER_ATTACK_DISTANCE } from "../utils/Constants";
+import { PLAYER_ATTACK_DISTANCE, PLAYER_EK_SCORE, PLAYER_HIT_SCORE } from "../utils/Constants";
 import { Utils } from "../utils/Utils";
 import { Action } from "./Action";
 
@@ -29,9 +29,11 @@ export class PlayerAttackAction implements Action<PlayerAttackActionParams, void
           const damage = Utils.throwDice(2, 8);
           enemy.hp -= damage;
           if (enemy.hp > 0) {
+            player.score += PLAYER_HIT_SCORE;
             enemy.state = "hurt"
             setTimeout(() => { enemy.state = "idle" }, 200);
           } else {
+            player.score += PLAYER_EK_SCORE;
             enemy.state = "dead"
           }
         }

@@ -24,14 +24,21 @@ export class StartScene extends Scene {
     const x = this.game.canvas.width / 2;
     const y = 200;
     this.nameTextField = new TextField(this, x, y);
+    this.nameTextField.onKeyEnter = () => {
+      this.startGame();
+    }
   }
 
   private createPlayButton() {
     const x = this.game.canvas.width / 2;
-    const y = 260;
+    const y = 270;
     this.playButton = new Button(this, x, y);
     this.playButton.onClick = () => {
-      this.scene.start("GameScene", { name: this.nameTextField.getText() });
+      this.startGame();
     }
+  }
+
+  private startGame() {
+    this.scene.start("GameScene", { name: this.nameTextField.getText() });
   }
 }

@@ -9,4 +9,5 @@ export interface Player {
   position: Position;
   targetPosition?: Position;
   state: 'idle' | 'walk' | 'attack' | 'hurt' | 'dead';
+  score: number;
 }

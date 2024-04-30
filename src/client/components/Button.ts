@@ -19,11 +19,11 @@ export class Button extends Phaser.GameObjects.Container {
     this.button.type = "button";
     this.button.style.borderRadius = "0";
     this.button.style.backgroundColor = BASE_COLOR;
-    this.button.style.border = "2px solid black";
+    this.button.style.border = "4px solid black";
     this.button.style.cursor = "pointer";
     this.button.style.padding = "5px";
     this.button.style.height = "64px";
-    this.button.style.fontFamily = "Roboto";
+    this.button.style.fontFamily = "half_bold_pixel";
     this.button.style.fontSize = "24px";
     this.button.style.textAlign = "center";
     this.button.style.color = "black";

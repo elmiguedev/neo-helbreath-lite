@@ -1,13 +1,13 @@
 import { Scene } from "phaser";
 import { SocketManager } from "../sockets/SocketManager";
-import { Player } from "../../domain/Player";
 import { PlayerEntity } from "../entities/PlayerEntity";
-import { GameState } from "../../domain/GameState";
+import { GameHud } from "../huds/GameHud";
 
 export class GameScene extends Scene {
   private socketManager: SocketManager;
   private players: Record<string, PlayerEntity> = {};
   private playerName: string;
+  private gameHud: GameHud;
 
   constructor() {
     super("GameScene");
@@ -18,6 +18,7 @@ export class GameScene extends Scene {
   }
 
   create() {
+    this.createGameHud();
     this.createSocketManager();
     this.createBackground();
     this.createMusic();
@@ -30,7 +31,12 @@ export class GameScene extends Scene {
 
   createSocketManager() {
     this.players = {}
-    this.socketManager = new SocketManager(this, this.players, this.playerName);
+    this.socketManager = new SocketManager(
+      this,
+      this.players,
+      this.playerName,
+      this.gameHud
+    );
   }
 
   private createBackground() {
@@ -67,6 +73,11 @@ export class GameScene extends Scene {
       loop: true,
       volume: 0.2
     });
+  }
+
+  private createGameHud() {
+    this.scene.run("GameHud");
+    this.gameHud = this.scene.get("GameHud") as GameHud;
   }
 
 }

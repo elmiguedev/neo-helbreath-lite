@@ -2,16 +2,15 @@ import { Game } from "phaser";
 import { GameScene } from "./scenes/GameScene";
 import { BootloaderScene } from "./scenes/BootloaderScene";
 import { StartScene } from "./scenes/StartScene";
+import { GameHud } from "./huds/GameHud";
 
 export default new Game({
   type: Phaser.AUTO,
   parent: "game",
   backgroundColor: "#000000",
   scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 600,
-    height: 600
+    width: window.innerWidth,
+    height: window.innerHeight
   },
   render: {
     pixelArt: true
@@ -22,6 +21,7 @@ export default new Game({
   scene: [
     BootloaderScene,
     StartScene,
-    GameScene
+    GameScene,
+    GameHud
   ]
 })

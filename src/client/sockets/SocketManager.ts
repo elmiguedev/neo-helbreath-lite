@@ -6,6 +6,7 @@ import { Position } from "../../domain/Position";
 import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler";
 import { PlayerEntity } from "../entities/PlayerEntity";
 import { Scene } from "phaser";
+import { GameHud } from "../huds/GameHud";
 
 const DEFAULT_SERVER_URL = "http://localhost:3000";
 const SERVER_URL = import.meta.env.DEV ? DEFAULT_SERVER_URL : ""
@@ -19,7 +20,8 @@ export class SocketManager {
   constructor(
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>,
-    private readonly playerName: string
+    private readonly playerName: string,
+    private readonly gameHud: GameHud
   ) {
     this.socket = io(SERVER_URL, {
       query: {
@@ -27,7 +29,7 @@ export class SocketManager {
       }
     });
     this.socket.on("connect", () => {
-      this.gameStateHandler = new GameStateHandler(this, this.scene, this.players);
+      this.gameStateHandler = new GameStateHandler(this, this.scene, this.players, this.gameHud);
       this.playerDisconnectedHandler = new PlayerDisconnectedHandler(this.players);
       this.socket.on(GAME_STATE_MESSAGE, this.gameStateHandler.execute.bind(this.gameStateHandler));
       this.socket.on(PLAYER_DISCONNECTED_MESSAGE, this.playerDisconnectedHandler.execute.bind(this.playerDisconnectedHandler))

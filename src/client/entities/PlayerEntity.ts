@@ -12,7 +12,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   constructor(scene: Phaser.Scene, playerState: Player) {
     super(scene, playerState.position.x, playerState.position.y, "player");
     this.playerState = playerState;
-
     this.scene.add.existing(this);
     this.setTint(playerState.color);
     this.anims.createFromAseprite("player");
@@ -97,7 +96,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private createLabel() {
     this.playerLabel = this.scene.add.text(this.x, this.y - 40, this.playerState.name, {
       color: "black",
-      fontFamily: "Roboto",
+      fontFamily: "half_bold_pixel",
       fontSize: "24px",
       align: "center"
     }).setOrigin(0.5, 0.5);

@@ -4,15 +4,18 @@ import { GameState } from "../../../domain/GameState";
 import { PlayerEntity } from "../../entities/PlayerEntity";
 import { Scene } from "phaser";
 import { SocketManager } from "../SocketManager";
+import { GameHud } from "../../huds/GameHud";
 
 export class GameStateHandler {
   constructor(
     private readonly socketManager: SocketManager,
     private readonly scene: Scene,
-    private readonly players: Record<string, PlayerEntity>
+    private readonly players: Record<string, PlayerEntity>,
+    private readonly gameHud: GameHud
   ) { }
 
   public execute(gameState: GameState) {
+    this.gameHud.setGameState(gameState);
     Object.keys(gameState.players).forEach((key) => {
       const player = gameState.players[key];
       if (!this.players[key]) {

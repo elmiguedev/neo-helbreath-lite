@@ -19,7 +19,8 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       hp: 100,
       maxHp: 100,
       position: Utils.getRandomPositionByRadius(200),
-      state: 'idle'
+      state: 'idle',
+      score: 0,
     }
     this.gameState.players[player.id] = player;
   }
