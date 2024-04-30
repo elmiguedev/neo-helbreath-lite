@@ -25,7 +25,8 @@ const socketServer = new SocketServer(server, {
 
 // creamos las dependencias del servidor
 const gameState: GameState = {
-  players: {}
+  players: {},
+  monsters: {}
 }
 
 const createPlayerAction = new CreatePlayerAction(gameState);

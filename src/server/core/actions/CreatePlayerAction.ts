@@ -1,5 +1,7 @@
 import { GameState } from "../../../domain/GameState";
 import { Player } from "../../../domain/Player";
+import { PlayerEntity } from "../entities/PlayerEntity";
+import { PLAYER_BASE_ARMOR_CLASS } from "../utils/Constants";
 import { Utils } from "../utils/Utils";
 import { Action } from "./Action";
 
@@ -12,7 +14,7 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
   constructor(private readonly gameState: GameState) { }
 
   public execute(input: CreatePlayerActionParams): void {
-    const player: Player = {
+    const player = new PlayerEntity({
       id: input.id,
       name: input.name,
       color: Utils.getRandomHexColor(),
@@ -21,7 +23,15 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       position: Utils.getRandomPositionByRadius(200),
       state: 'idle',
       score: 0,
-    }
-    this.gameState.players[player.id] = player;
+      vitality: 1,
+      dextery: 1,
+      strength: 1,
+      level: 1,
+      experience: 0,
+      nextLevelExperience: 100,
+      armorClass: PLAYER_BASE_ARMOR_CLASS,
+      hasEnemiTarget: false
+    });
+    this.gameState.players[input.id] = player;
   }
 }

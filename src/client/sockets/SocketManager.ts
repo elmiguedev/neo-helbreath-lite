@@ -1,12 +1,12 @@
 import io, { Socket } from "socket.io-client";
 import { GameStateHandler } from "./handlers/GameStateHandler";
-import { GameState } from "../../domain/GameState";
 import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE } from "../../domain/Messages";
 import { Position } from "../../domain/Position";
 import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler";
 import { PlayerEntity } from "../entities/PlayerEntity";
 import { Scene } from "phaser";
 import { GameHud } from "../huds/GameHud";
+import { GameState } from "./domain/GameState";
 
 const DEFAULT_SERVER_URL = "http://localhost:3000";
 const SERVER_URL = import.meta.env.DEV ? DEFAULT_SERVER_URL : ""

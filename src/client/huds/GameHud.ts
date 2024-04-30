@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { GameState } from "../../domain/GameState";
+import { GameState } from "../sockets/domain/GameState";
 
 export class GameHud extends Scene {
   private gameState: GameState;

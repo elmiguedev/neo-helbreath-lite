@@ -1,5 +1,7 @@
 import { Position } from "./Position";
 
+export type PlayerState = 'walk' | 'idle' | 'attack' | 'hurt' | 'dead' | 'absorb';
+
 export interface Player {
   id: string;
   name: string;
@@ -8,6 +10,14 @@ export interface Player {
   maxHp: number;
   position: Position;
   targetPosition?: Position;
-  state: 'idle' | 'walk' | 'attack' | 'hurt' | 'dead' | 'absorb';
+  hasEnemiTarget: boolean;
+  state: PlayerState;
   score: number;
+  vitality: number;
+  dextery: number;
+  strength: number;
+  level: number;
+  experience: number;
+  nextLevelExperience: number;
+  armorClass: number;
 }

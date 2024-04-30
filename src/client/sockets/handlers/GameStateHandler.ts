@@ -1,10 +1,8 @@
-import { Socket } from "socket.io-client";
-import { GAME_STATE_MESSAGE } from "../../../domain/Messages";
-import { GameState } from "../../../domain/GameState";
 import { PlayerEntity } from "../../entities/PlayerEntity";
 import { Scene } from "phaser";
 import { SocketManager } from "../SocketManager";
 import { GameHud } from "../../huds/GameHud";
+import { GameState } from "../domain/GameState";
 
 export class GameStateHandler {
   constructor(
