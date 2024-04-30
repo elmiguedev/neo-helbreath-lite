@@ -20,6 +20,9 @@ export class PlayerAttackAction implements Action<PlayerAttackActionParams, void
     const player = this.gameState.players[params.playerId];
     const enemy = this.gameState.players[params.enemyId];
     if (player && enemy) {
+      if (player.state === "dead") return;
+      if (player.state === "attack") return;
+
       const distance = Utils.distanceBetween(player.position, enemy.position);
       if (distance <= PLAYER_ATTACK_DISTANCE) {
 
