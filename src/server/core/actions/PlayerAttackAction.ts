@@ -30,6 +30,7 @@ export class PlayerAttackAction implements Action<PlayerAttackActionParams, void
         player.increaseScore(PLAYER_HIT_SCORE);
         if (enemy.isDead()) {
           player.increaseScore(PLAYER_EK_SCORE);
+          player.increaseExperience(enemy.getExperience())
         }
       }
     }

@@ -1,6 +1,6 @@
-import { Player, PlayerState } from "../../../domain/Player";
+import { Player, PlayerState, PlayerStats } from "../../../domain/Player";
 import { Position } from "../../../domain/Position";
-import { PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED } from "../utils/Constants";
+import { EXPERIENCE_TABLE, PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED } from "../utils/Constants";
 import { Utils } from "../utils/Utils";
 
 export class PlayerEntity {
@@ -41,7 +41,7 @@ export class PlayerEntity {
   }
 
   public getDamage() {
-    return Utils.throwDice(2, 8) + this.playerState.strength
+    return Utils.throwDice(2, 8) + this.playerState.stats.strength
   }
 
   public hurt(damage: number) {
@@ -78,7 +78,7 @@ export class PlayerEntity {
 
   public canHit(armorClass: number) {
     const hitRoll = Utils.throwDice(1, 20);
-    return hitRoll + this.playerState.dextery >= armorClass
+    return hitRoll + this.playerState.stats.dextery >= armorClass
   }
 
   public isInAttackRange(position: Position) {
@@ -130,10 +130,43 @@ export class PlayerEntity {
       this.playerState.position.x <= maxX
   }
 
+  public getExperience() {
+    return this.playerState.experience;
+  }
+
+  public increaseExperience(value: number) {
+    this.playerState.experience += value;
+    this.validateNewLevel();
+  }
+
+  public canUpdateStats() {
+    return this.playerState.availablePoints > 0;
+  }
+
+  public getAvailablePoints() {
+    return this.playerState.availablePoints;
+  }
+
+  public updateStats(stats: PlayerStats) {
+    this.playerState.stats.dextery += stats.dextery;
+    this.playerState.stats.strength += stats.strength;
+    this.playerState.stats.vitality += stats.vitality;
+    this.playerState.availablePoints -= stats.dextery + stats.strength + stats.vitality;
+  }
+
   private getTargetValidationDistance() {
     return this.playerState.hasEnemiTarget
       ? PLAYER_ATTACK_DISTANCE
       : PLAYER_MAX_SPEED
+  }
+
+  private validateNewLevel() {
+    if (this.playerState.experience >= this.playerState.nextLevelExperience) {
+      this.playerState.level += 1;
+      this.playerState.nextLevelExperience = EXPERIENCE_TABLE[this.playerState.level + 1];
+      this.playerState.availablePoints += 1;
+      this.validateNewLevel();
+    }
   }
 
 }

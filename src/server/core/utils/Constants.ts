@@ -30,4 +30,6 @@ export const EXPERIENCE_TABLE = [
   98526,
   147789,
   221684,
+  332526,
+  498789
 ]

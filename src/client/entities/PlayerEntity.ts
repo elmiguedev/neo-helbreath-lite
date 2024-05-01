@@ -125,8 +125,9 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private updateLabel() {
     if (this.playerLabel && this.playerLabel.active) {
-      this.playerLabel.setPosition(this.x, this.y - 60);
-      this.playerLabel.setText(`${this.playerState.name} (${this.playerState.hp}/${this.playerState.maxHp})`);
+      this.playerLabel.setPosition(this.x, this.y - 80);
+      this.playerLabel.setAlign("center");
+      this.playerLabel.setText(`(${this.playerState.level})\n${this.playerState.name}`);
       this.playerLabel.setDepth(this.depth);
     }
   }
@@ -142,11 +143,13 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private createHpBar() {
     this.hpBar = new StatBar(
       this.scene,
-      this.x,
-      this.y,
-      0x00ff00,
-      this.playerState.maxHp,
-      this.playerState.hp
+      {
+        x: this.x,
+        y: this.y,
+        color: 0x00ff00,
+        max: this.playerState.maxHp,
+        value: this.playerState.hp,
+      }
     )
   }
 

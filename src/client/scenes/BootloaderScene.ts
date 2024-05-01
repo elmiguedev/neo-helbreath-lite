@@ -4,6 +4,7 @@ import PlayerPng from "../assets/sprites/player/player.png?url";
 import PlayerJson from "../assets/sprites/player/player.json";
 import HurtOgg from "../assets/sounds/hurt.ogg";
 import GameMp3 from "../assets/sounds/game.mp3?url";
+import StatButtonPng from "../assets/sprites/ui/stat_button.png?url";
 
 export class BootloaderScene extends Scene {
   constructor() {
@@ -11,6 +12,7 @@ export class BootloaderScene extends Scene {
   }
 
   public preload() {
+    this.load.image("stat_button", StatButtonPng);
     this.load.aseprite("player", PlayerPng, PlayerJson);
     this.load.audio("hurt", HurtOgg);
     this.load.audio("game", GameMp3);

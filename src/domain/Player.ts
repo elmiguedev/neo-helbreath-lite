@@ -2,6 +2,12 @@ import { Position } from "./Position";
 
 export type PlayerState = 'walk' | 'idle' | 'attack' | 'hurt' | 'dead' | 'absorb';
 
+export interface PlayerStats {
+  vitality: number;
+  dextery: number;
+  strength: number;
+}
+
 export interface Player {
   id: string;
   name: string;
@@ -13,11 +19,10 @@ export interface Player {
   hasEnemiTarget: boolean;
   state: PlayerState;
   score: number;
-  vitality: number;
-  dextery: number;
-  strength: number;
+  stats: PlayerStats;
   level: number;
   experience: number;
   nextLevelExperience: number;
   armorClass: number;
+  availablePoints: number;
 }

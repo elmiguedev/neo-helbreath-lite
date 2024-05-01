@@ -1,7 +1,7 @@
 import { GameState } from "../../../domain/GameState";
 import { Player } from "../../../domain/Player";
 import { PlayerEntity } from "../entities/PlayerEntity";
-import { PLAYER_BASE_ARMOR_CLASS } from "../utils/Constants";
+import { EXPERIENCE_TABLE, PLAYER_BASE_ARMOR_CLASS } from "../utils/Constants";
 import { Utils } from "../utils/Utils";
 import { Action } from "./Action";
 
@@ -23,14 +23,17 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       position: Utils.getRandomPositionByRadius(200),
       state: 'idle',
       score: 0,
-      vitality: 1,
-      dextery: 1,
-      strength: 1,
+      stats: {
+        vitality: 1,
+        dextery: 1,
+        strength: 1,
+      },
       level: 1,
-      experience: 0,
-      nextLevelExperience: 100,
+      experience: EXPERIENCE_TABLE[1],
+      nextLevelExperience: EXPERIENCE_TABLE[2],
       armorClass: PLAYER_BASE_ARMOR_CLASS,
-      hasEnemiTarget: false
+      hasEnemiTarget: false,
+      availablePoints: 0
     });
     this.gameState.players[input.id] = player;
   }

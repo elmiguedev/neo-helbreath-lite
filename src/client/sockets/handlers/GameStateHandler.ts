@@ -14,6 +14,7 @@ export class GameStateHandler {
 
   public execute(gameState: GameState) {
     this.gameHud.setGameState(gameState);
+
     Object.keys(gameState.players).forEach((key) => {
       const player = gameState.players[key];
       if (!this.players[key]) {
