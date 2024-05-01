@@ -1,6 +1,6 @@
 import io, { Socket } from "socket.io-client";
 import { GameStateHandler } from "./handlers/GameStateHandler";
-import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE } from "../../domain/Messages";
+import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE } from "../../domain/Messages";
 import { Position } from "../../domain/Position";
 import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler";
 import { PlayerEntity } from "../entities/PlayerEntity";
@@ -9,6 +9,7 @@ import { GameHud } from "../huds/GameHud";
 import { GameState } from "./domain/GameState";
 
 const DEFAULT_SERVER_URL = "http://localhost:3000";
+// @ts-ignore
 const SERVER_URL = import.meta.env.DEV ? DEFAULT_SERVER_URL : ""
 
 export class SocketManager {
@@ -49,7 +50,14 @@ export class SocketManager {
 
   public notifyPlayerAttack(id: string) {
     if (this.socket.connected) {
-      this.socket.emit(PLAYER_ATTACK_MESSAGE, id);
+      if (this.players[id].getState() !== "attack")
+        this.socket.emit(PLAYER_ATTACK_MESSAGE, id);
+    }
+  }
+
+  public notifyPlayerCancel() {
+    if (this.socket.connected) {
+      this.socket.emit(PLAYER_CANCEL_MESSAGE);
     }
   }
 

@@ -11,7 +11,7 @@ export class PlayerMoveAction implements Action<PlayerMoveActionParams, void> {
 
   public execute(params: PlayerMoveActionParams): void {
     const player = this.gameState.players[params.id];
-    if (player) {
+    if (player && player.playerState.targetPosition !== params.position) {
       player.setTargetPosition(params.position);
     }
   }

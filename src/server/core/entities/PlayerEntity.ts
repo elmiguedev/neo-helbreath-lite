@@ -10,7 +10,7 @@ export class PlayerEntity {
     this.playerState = playerState
   }
 
-  public setTargetPosition(position: Position) {
+  public setTargetPosition(position?: Position) {
     this.playerState.hasEnemiTarget = false;
     this.playerState.targetPosition = position
   }

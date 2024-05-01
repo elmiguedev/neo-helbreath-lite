@@ -4,6 +4,7 @@ import { GameState } from "../sockets/domain/GameState";
 export class GameHud extends Scene {
   private gameState: GameState;
   private txtPlayers: Phaser.GameObjects.Text;
+  private txtTest: Phaser.GameObjects.Text;
 
   constructor() {
     super("GameHud");
@@ -11,6 +12,17 @@ export class GameHud extends Scene {
 
   create() {
     this.createPlayers();
+    this.txtTest = this.add.text(
+      this.game.canvas.width / 2,
+      10,
+      "",
+      {
+        fontFamily: "half_bold_pixel",
+        fontSize: "24px",
+        color: "black",
+        align: "center"
+      }
+    );
   }
 
   update() {
@@ -44,5 +56,9 @@ export class GameHud extends Scene {
         players += `${player.name}: ${player.score}\n`;
       })
     this.txtPlayers.setText(players);
+  }
+
+  public setTestText(value: string) {
+    this.txtTest.setText(value);
   }
 }
