@@ -1,6 +1,6 @@
 import io, { Socket } from "socket.io-client";
 import { GameStateHandler } from "./handlers/GameStateHandler";
-import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "../../domain/Messages";
+import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_KEYS_MOVE_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "../../domain/Messages";
 import { Position } from "../../domain/Position";
 import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler";
 import { PlayerEntity } from "../entities/PlayerEntity";
@@ -23,7 +23,7 @@ export class SocketManager {
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>,
     private readonly playerName: string,
-    private readonly gameHud: GameHud
+    private readonly gameHud: GameHud,
   ) {
     this.socket = io(SERVER_URL, {
       query: {
@@ -69,6 +69,12 @@ export class SocketManager {
   public notifyPlayerStatsUpdate(stats: PlayerStats) {
     if (this.socket.connected) {
       this.socket.emit(PLAYER_STATS_UPDATE_MESSAGE, stats);
+    }
+  }
+
+  public notifyPlayerKeysMove(keys: { left: boolean, right: boolean, up: boolean, down: boolean }) {
+    if (this.socket.connected) {
+      this.socket.emit(PLAYER_KEYS_MOVE_MESSAGE, keys);
     }
   }
 

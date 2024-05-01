@@ -9,6 +9,13 @@ export class GameScene extends Scene {
   private playerName: string;
   private gameHud: GameHud;
 
+  private keys: {
+    left: Phaser.Input.Keyboard.Key;
+    right: Phaser.Input.Keyboard.Key;
+    up: Phaser.Input.Keyboard.Key;
+    down: Phaser.Input.Keyboard.Key;
+  }
+
   private mouseObjects: any[];
 
   constructor() {
@@ -25,13 +32,12 @@ export class GameScene extends Scene {
     this.createBackground();
     this.createMusic();
     this.createInput();
-
-
+    this.createKeyInputs();
   }
 
   update() {
     this.updatePlayers();
-    // this.checkInput();
+    this.checkKeyInput();
   }
 
   createSocketManager() {
@@ -90,25 +96,27 @@ export class GameScene extends Scene {
     });
 
   }
-  // private checkInput() {
-  //   if (this.input.mousePointer.isDown) {
-  //     this.gameHud.setTestText(`TRUE (${this.mouseObjects})`)
-  //     if (this.mouseObjects.length > 0) {
-  //       if (this.mouseObjects.length === 1) {
-  //         const playerEntity: PlayerEntity = this.mouseObjects[0];
-  //         this.socketManager.notifyPlayerAttack(playerEntity.getId());
-  //       }
-  //     } else {
 
-  //       this.socketManager.notifyPlayerMove({
-  //         x: this.input.mousePointer.worldX,
-  //         y: this.input.mousePointer.worldY
-  //       });
-  //     }
-  //   } else {
-  //     this.gameHud.setTestText("FALSE")
-  //   }
-  // }
+  private createKeyInputs() {
+    this.keys = {
+      left: this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+      right: this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+      up: this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+      down: this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+    }
+  }
+
+  private checkKeyInput() {
+    const player = this.getMainPlayer();
+    if (player) {
+      this.socketManager.notifyPlayerKeysMove({
+        left: this.keys.left.isDown,
+        right: this.keys.right.isDown,
+        up: this.keys.up.isDown,
+        down: this.keys.down.isDown
+      });
+    }
+  }
 
   private updatePlayers() {
     for (const id in this.players) {
@@ -128,6 +136,14 @@ export class GameScene extends Scene {
   private createGameHud() {
     this.scene.run("GameHud");
     this.gameHud = this.scene.get("GameHud") as GameHud;
+  }
+
+  private getMainPlayer() {
+    if (this.socketManager.getId()) {
+      const playerId: string = this.socketManager.getId()!;
+      const player = this.players[playerId];
+      return player;
+    }
   }
 
 }

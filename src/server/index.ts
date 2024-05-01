@@ -6,7 +6,7 @@ import { CreatePlayerAction } from "./core/actions/CreatePlayerAction";
 import { GameStateEvent } from "./core/events/GameStateEvent";
 import { RemovePlayerAction } from "./core/actions/RemovePlayerAction";
 import { GameState } from "../domain/GameState";
-import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "../domain/Messages";
+import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_KEYS_MOVE_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "../domain/Messages";
 import { PlayerMoveAction } from "./core/actions/PlayerMoveAction";
 import { Position } from "../domain/Position";
 import { UpdatePlayersAction } from "./core/actions/UpdatePlayersAction";
@@ -14,6 +14,7 @@ import { PlayerAttackAction, PlayerAttackActionParams } from "./core/actions/Pla
 import { PlayerCancelAction } from "./core/actions/PlayerCancelAction";
 import { PlayerStatUpdateAction } from "./core/actions/PlayerStatUpdateAction";
 import { PlayerStats } from "../domain/Player";
+import { PlayerMoveKeysAction } from "./core/actions/PlayerMoveKeysAction";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -39,6 +40,8 @@ const updatePlayersAction = new UpdatePlayersAction(gameState);
 const playerAttackAction = new PlayerAttackAction(gameState);
 const playerCancelAction = new PlayerCancelAction(gameState);
 const playerStatUpdateAction = new PlayerStatUpdateAction(gameState);
+const playerMoveKeysAction = new PlayerMoveKeysAction(gameState);
+
 const gameStateEvent = new GameStateEvent(gameState);
 
 // creamos la conexion por socket
@@ -65,6 +68,13 @@ socketServer.on("connection", (socket: Socket) => {
 
   socket.on(PLAYER_CANCEL_MESSAGE, () => {
     playerCancelAction.execute(socket.id);
+  });
+
+  socket.on(PLAYER_KEYS_MOVE_MESSAGE, (keys: { left: false, right: false, up: false, down: false }) => {
+    playerMoveKeysAction.execute({
+      playerId: socket.id,
+      keys
+    });
   });
 
   socket.on(PLAYER_STATS_UPDATE_MESSAGE, (stats: PlayerStats) => {
