@@ -1,7 +1,7 @@
 import { GameState } from "../../../domain/GameState";
 import { Player } from "../../../domain/Player";
 import { PlayerEntity } from "../entities/PlayerEntity";
-import { EXPERIENCE_TABLE, PLAYER_BASE_ARMOR_CLASS } from "../utils/Constants";
+import { EXPERIENCE_TABLE, PLAYER_BASE_ARMOR_CLASS, PLAYER_BASE_HP } from "../utils/Constants";
 import { Utils } from "../utils/Utils";
 import { Action } from "./Action";
 
@@ -18,8 +18,8 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       id: input.id,
       name: input.name,
       color: Utils.getRandomHexColor(),
-      hp: 100,
-      maxHp: 100,
+      hp: PLAYER_BASE_HP,
+      maxHp: PLAYER_BASE_HP,
       position: Utils.getRandomPositionByRadius(200),
       state: 'idle',
       score: 0,

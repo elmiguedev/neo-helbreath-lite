@@ -1,6 +1,6 @@
 import { Player, PlayerState, PlayerStats } from "../../../domain/Player";
 import { Position } from "../../../domain/Position";
-import { EXPERIENCE_TABLE, PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED } from "../utils/Constants";
+import { EXPERIENCE_TABLE, PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_BASE_HP, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED } from "../utils/Constants";
 import { Utils } from "../utils/Utils";
 
 export class PlayerEntity {
@@ -152,6 +152,9 @@ export class PlayerEntity {
     this.playerState.stats.strength += stats.strength;
     this.playerState.stats.vitality += stats.vitality;
     this.playerState.availablePoints -= stats.dextery + stats.strength + stats.vitality;
+
+    this.playerState.maxHp = PLAYER_BASE_HP
+      + (this.playerState.stats.vitality * 6);
   }
 
   private getTargetValidationDistance() {
@@ -165,6 +168,7 @@ export class PlayerEntity {
       this.playerState.level += 1;
       this.playerState.nextLevelExperience = EXPERIENCE_TABLE[this.playerState.level + 1];
       this.playerState.availablePoints += 1;
+      this.playerState.hp += Math.floor(this.playerState.hp / 2);
       this.validateNewLevel();
     }
   }

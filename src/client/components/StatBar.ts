@@ -22,6 +22,7 @@ export class StatBar extends Phaser.GameObjects.Container {
   private bar: Phaser.GameObjects.Rectangle;
   private max: number;
   private value: number;
+  private label: Phaser.GameObjects.Text;
 
   constructor(scene: Scene, props: StatBarProps) {
     super(scene, props.x, props.y);
@@ -58,8 +59,11 @@ export class StatBar extends Phaser.GameObjects.Container {
       props.color
     ).setOrigin(0);
 
+    this.createLabel();
+
     this.add(this.background)
     this.add(this.bar)
+    this.add(this.label);
   }
   //363294
 
@@ -91,8 +95,10 @@ export class StatBar extends Phaser.GameObjects.Container {
 
   private updateBar() {
     const size = Math.floor((this.value * this.getMaxWidth()) / this.max)
-    if (this.bar)
+    if (this.bar) {
       this.bar.setSize(size, this.bar.height);
+      this.updateLabel();
+    }
   }
 
   private getMaxWidth() {
@@ -105,6 +111,21 @@ export class StatBar extends Phaser.GameObjects.Container {
     return this.props.borderWidth
       ? (this.props.height || BAR_HEIGHT) - (this.props.borderWidth * 2)
       : this.props.height || BAR_HEIGHT;
+  }
+
+  private createLabel() {
+    this.label = this.scene.add.text(0, 0, "", {
+      fontFamily: "half_bold_pixel",
+      fontSize: "8px",
+      color: "black",
+      align: "left"
+    });
+  }
+
+  private updateLabel() {
+    if (this.label.visible) {
+      this.label.setText(`${this.value}/${this.max}`);
+    }
   }
 
 }
