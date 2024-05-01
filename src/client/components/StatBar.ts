@@ -93,6 +93,10 @@ export class StatBar extends Phaser.GameObjects.Container {
     this.updateBar();
   }
 
+  public showLabel() {
+    this.label.setVisible(true);
+  }
+
   private updateBar() {
     const size = Math.floor((this.value * this.getMaxWidth()) / this.max)
     if (this.bar) {
@@ -119,7 +123,7 @@ export class StatBar extends Phaser.GameObjects.Container {
       fontSize: "8px",
       color: "black",
       align: "left"
-    });
+    }).setVisible(false);
   }
 
   private updateLabel() {

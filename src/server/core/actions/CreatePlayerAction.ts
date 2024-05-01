@@ -1,7 +1,7 @@
 import { GameState } from "../../../domain/GameState";
 import { Player } from "../../../domain/Player";
 import { PlayerEntity } from "../entities/PlayerEntity";
-import { EXPERIENCE_TABLE, PLAYER_BASE_ARMOR_CLASS, PLAYER_BASE_HP } from "../utils/Constants";
+import { EXPERIENCE_TABLE, PLAYER_BASE_ARMOR_CLASS, PLAYER_BASE_HP, PLAYER_HP_COOLDOWN } from "../utils/Constants";
 import { Utils } from "../utils/Utils";
 import { Action } from "./Action";
 
@@ -33,7 +33,11 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       nextLevelExperience: EXPERIENCE_TABLE[2],
       armorClass: PLAYER_BASE_ARMOR_CLASS,
       hasEnemiTarget: false,
-      availablePoints: 0
+      availablePoints: 0,
+      hpCoolDown: PLAYER_HP_COOLDOWN,
+      control: {
+        hpCoolDown: 0
+      }
     });
     this.gameState.players[input.id] = player;
   }

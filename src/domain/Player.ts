@@ -8,6 +8,10 @@ export interface PlayerStats {
   strength: number;
 }
 
+export interface PlayerControl {
+  hpCoolDown: number;
+}
+
 export interface Player {
   id: string;
   name: string;
@@ -25,4 +29,6 @@ export interface Player {
   nextLevelExperience: number;
   armorClass: number;
   availablePoints: number;
+  hpCoolDown: number;
+  control: PlayerControl
 }

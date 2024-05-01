@@ -150,7 +150,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
         max: this.playerState.maxHp,
         value: this.playerState.hp,
       }
-    )
+    );
+    this.hpBar.showLabel();
   }
 
   private updateHpBar() {
@@ -158,6 +159,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
       this.hpBar.setPosition(this.x - 25, this.y - 40);
       this.hpBar.setDepth(this.depth);
       this.hpBar.setValue(this.playerState.hp);
+      this.hpBar.setMaxValue(this.playerState.maxHp);
     }
   }
 

@@ -155,6 +155,15 @@ export class PlayerEntity {
 
     this.playerState.maxHp = PLAYER_BASE_HP
       + (this.playerState.stats.vitality * 6);
+
+  }
+
+  public updateHp() {
+    this.playerState.control.hpCoolDown++;
+    if (this.playerState.control.hpCoolDown > this.playerState.hpCoolDown) {
+      this.playerState.control.hpCoolDown = 0;
+      this.recoverHp();
+    }
   }
 
   private getTargetValidationDistance() {
@@ -171,6 +180,19 @@ export class PlayerEntity {
       this.playerState.hp += Math.floor(this.playerState.hp / 2);
       this.validateNewLevel();
     }
+  }
+
+  private increaseHp(value: number) {
+    this.playerState.hp += value;
+    if (this.playerState.hp > this.playerState.maxHp) {
+      this.playerState.hp = this.playerState.maxHp
+    }
+  }
+
+  private recoverHp() {
+    this.increaseHp(
+      2 + (this.playerState.stats.vitality * 5)
+    )
   }
 
 }

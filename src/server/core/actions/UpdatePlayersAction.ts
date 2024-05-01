@@ -13,6 +13,7 @@ export class UpdatePlayersAction implements Action<void, void> {
       if (!player.canMove()) return;
       player.setState("walk");
       player.updatePosition();
+      player.updateHp();
       this.validateWorldBounds(player);
 
       if (!player.canMove()) {
