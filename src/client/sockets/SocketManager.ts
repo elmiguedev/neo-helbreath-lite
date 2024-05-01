@@ -9,7 +9,7 @@ import { GameHud } from "../huds/GameHud";
 import { GameState } from "./domain/GameState";
 import { PlayerStats } from "../../domain/Player";
 
-const DEFAULT_SERVER_URL = "http://localhost:3000";
+const DEFAULT_SERVER_URL = "/";
 // @ts-ignore
 const SERVER_URL = import.meta.env.DEV ? DEFAULT_SERVER_URL : ""
 
