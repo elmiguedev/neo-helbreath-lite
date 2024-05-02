@@ -1,6 +1,8 @@
 import { Position } from "./Position";
 import { Player } from "./Player";
 
+export type MonsterType = "chobi"
+
 export interface Monster {
   id: string;
   name: string;
@@ -15,4 +17,5 @@ export interface Monster {
   attackDieCount: number;
   attackDieSides: number;
   ca: number;
+  type: MonsterType;
 }

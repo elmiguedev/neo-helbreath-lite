@@ -3,12 +3,14 @@ import { Scene } from "phaser";
 import { SocketManager } from "../SocketManager";
 import { GameHud } from "../../huds/GameHud";
 import { GameState } from "../domain/GameState";
+import { MonsterEntity } from "../../entities/MonsterEntity";
 
 export class GameStateHandler {
   constructor(
     private readonly socketManager: SocketManager,
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>,
+    private readonly monsters: Record<string, MonsterEntity>,
     private readonly gameHud: GameHud
   ) { }
 
@@ -38,6 +40,23 @@ export class GameStateHandler {
           this.players[key].setPlayerState(player);
       }
     });
+
+    Object.keys(gameState.monsters).forEach((key) => {
+      const monster = gameState.monsters[key];
+      if (!this.monsters[key]) {
+        this.monsters[key] = new MonsterEntity(this.scene, monster);
+        this.monsters[key].onDie = () => {
+          if (this.monsters[key]) {
+            this.monsters[key].destroy();
+          }
+          delete this.monsters[key];
+        }
+      } else {
+        if (this.monsters[key])
+          this.monsters[key].setMonsterState(monster);
+      }
+    });
+
   }
 
 }

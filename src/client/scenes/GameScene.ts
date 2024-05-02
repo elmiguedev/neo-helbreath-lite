@@ -1,11 +1,13 @@
 import { Scene } from "phaser";
 import { SocketManager } from "../sockets/SocketManager";
 import { PlayerEntity } from "../entities/PlayerEntity";
+import { MonsterEntity } from "../entities/MonsterEntity"
 import { GameHud } from "../huds/GameHud";
 
 export class GameScene extends Scene {
   private socketManager: SocketManager;
   private players: Record<string, PlayerEntity> = {};
+  private monsters: Record<string, MonsterEntity> = {};
   private playerName: string;
   private gameHud: GameHud;
 
@@ -37,14 +39,17 @@ export class GameScene extends Scene {
 
   update() {
     this.updatePlayers();
+    this.updateMonsters();
     this.checkKeyInput();
   }
 
   createSocketManager() {
     this.players = {}
+    this.monsters = {}
     this.socketManager = new SocketManager(
       this,
       this.players,
+      this.monsters,
       this.playerName,
       this.gameHud
     );
@@ -122,6 +127,13 @@ export class GameScene extends Scene {
     for (const id in this.players) {
       if (this.players[id])
         this.players[id].update();
+    }
+  }
+
+  private updateMonsters() {
+    for (const id in this.monsters) {
+      if (this.monsters[id])
+        this.monsters[id].update();
     }
   }
 

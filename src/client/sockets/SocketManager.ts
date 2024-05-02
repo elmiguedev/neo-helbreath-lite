@@ -8,6 +8,7 @@ import { Scene } from "phaser";
 import { GameHud } from "../huds/GameHud";
 import { GameState } from "./domain/GameState";
 import { PlayerStats } from "../../domain/Player";
+import { MonsterEntity } from "../entities/MonsterEntity";
 
 const DEFAULT_SERVER_URL = "/";
 // @ts-ignore
@@ -22,6 +23,7 @@ export class SocketManager {
   constructor(
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>,
+    private readonly monsters: Record<string, MonsterEntity>,
     private readonly playerName: string,
     private readonly gameHud: GameHud,
   ) {
@@ -35,7 +37,7 @@ export class SocketManager {
       this.gameHud.onStatUpdate = (stats: PlayerStats) => {
         this.notifyPlayerStatsUpdate(stats);
       }
-      this.gameStateHandler = new GameStateHandler(this, this.scene, this.players, this.gameHud);
+      this.gameStateHandler = new GameStateHandler(this, this.scene, this.players, this.monsters, this.gameHud);
       this.playerDisconnectedHandler = new PlayerDisconnectedHandler(this.players);
       this.socket.on(GAME_STATE_MESSAGE, this.gameStateHandler.execute.bind(this.gameStateHandler));
       this.socket.on(PLAYER_DISCONNECTED_MESSAGE, this.playerDisconnectedHandler.execute.bind(this.playerDisconnectedHandler))

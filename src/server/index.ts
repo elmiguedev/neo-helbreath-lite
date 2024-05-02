@@ -15,6 +15,7 @@ import { PlayerCancelAction } from "./core/actions/PlayerCancelAction";
 import { PlayerStatUpdateAction } from "./core/actions/PlayerStatUpdateAction";
 import { PlayerStats } from "../domain/Player";
 import { PlayerMoveKeysAction } from "./core/actions/PlayerMoveKeysAction";
+import { MonsterEntity } from "./core/entities/MonsterEntity";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -30,7 +31,22 @@ const socketServer = new SocketServer(server, {
 // creamos las dependencias del servidor
 const gameState: GameState = {
   players: {},
-  monsters: {}
+  monsters: {
+    "chobi": new MonsterEntity({
+      attackDieCount: 1,
+      attackDieSides: 8,
+      ca: 5,
+      hp: 20,
+      id: "chobi",
+      maxExperience: 300,
+      minExperience: 100,
+      maxHp: 20,
+      name: "Chobi",
+      position: { x: 225, y: 225 },
+      state: "idle",
+      type: "chobi"
+    })
+  }
 }
 
 const createPlayerAction = new CreatePlayerAction(gameState);

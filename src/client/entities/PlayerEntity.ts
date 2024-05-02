@@ -166,7 +166,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private die() {
     this.playDeadAnimation();
     this.scene.time.addEvent({
-      delay: 5000,
+      delay: 2000,
       callback: () => {
         if (this.onDie) this.onDie();
       }
