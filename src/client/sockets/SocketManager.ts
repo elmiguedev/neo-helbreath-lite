@@ -49,24 +49,9 @@ export class SocketManager {
 
   public notifyPlayerMove(position: Position) {
     if (this.socket.connected && this.socket.id) {
-      // antes de mandar la ubicacion hace la preduccion
       const player = this.players[this.socket.id];
-      // let velocityX = position.x - player.x;
-      // let velocityY = position.y - player.y;
-
-      // // Normaliza la dirección del movimiento
-      // var length = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-      // if (length !== 0) {
-      //   velocityX /= length;
-      //   velocityY /= length;
-      // }
-
-      // antes de mandar, asigna la velocidad al player para que se mueva
-      // player.setClientVelocity(position.x, position.y);
-      player.setTargetPosition(position)
-
-      // finalmente envia la ubicacion
-      // this.socket.emit(PLAYER_MOVE_MEs
+      player.setClientTargetPosition(position)
+      this.socket.emit(PLAYER_MOVE_MESSAGE, position)
     }
   }
 

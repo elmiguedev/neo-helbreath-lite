@@ -9,11 +9,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private hpBar: StatBar;
   private hurtSound: Phaser.Sound.BaseSound;
 
-
   public onDie?: Function;
-
-  private lastUpdate: number;
-
 
   constructor(scene: Phaser.Scene, playerState: Player) {
     super(scene, playerState.position.x, playerState.position.y, "player");
@@ -41,28 +37,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   public setPlayerState(playerState: Player) {
-    const s: Player = {
-      armorClass: playerState.armorClass,
-      availablePoints: playerState.availablePoints,
-      color: playerState.color,
-      control: playerState.control,
-      experience: playerState.experience,
-      hasEnemiTarget: playerState.hasEnemiTarget,
-      hp: playerState.hp,
-      id: playerState.id,
-      maxHp: playerState.maxHp,
-      name: playerState.name,
-      position: playerState.position,
-      state: playerState.state,
-      hpCoolDown: playerState.hpCoolDown,
-      level: playerState.level,
-      nextLevelExperience: playerState.nextLevelExperience,
-      score: playerState.score,
-      stats: playerState.stats,
-      targetPosition: this.playerState.targetPosition
-    }
-    this.playerState = s;
-    this.lastUpdate = Date.now();
+    this.playerState = playerState;
+    this.serverDelay = Date.now();
   }
 
   public destroy(): void {
@@ -154,79 +130,49 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     if (this.playerLabel && this.playerLabel.active) {
       this.playerLabel.setPosition(this.x, this.y - 80);
       this.playerLabel.setAlign("center");
-      this.playerLabel.setText(`(${this.playerState.state})\n${this.playerState.name}`);
+      this.playerLabel.setText(`(${this.playerState.level})\n${this.playerState.name}`);
       this.playerLabel.setDepth(this.depth);
     }
   }
 
   private updatePosition() {
 
-    // if (Date.now() - this.lastUpdate > 3000) {
-    //   // TODAVIA ME FALTA VALIDAR SI HAY MUCHA DISTANCIA
-    //   // this.x += (this.playerState.position.x - this.x) * 0.3;
-    //   // this.y += (this.playerState.position.y - this.y) * 0.3;
-    // }
-
-    // // this.setPosition(thiss.playerState.position.x, this.playerState.position.y);
-    // this.setDepth(this.playerState.position.y);
-    // if (this.playerState.targetPosition) {
-    //   this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
-    // }
-
-    // // la prediccion:
-    // // var now = Date.now();
-    // // var timeSinceLastInput = now - this.lastInputProcessed;
-    // // if (timeSinceLastInput < this.predictionThreshold) {
-    // if (this.playerState.targetPosition) {
-    //   const pPosition = Utils.constantLerpPosition(
-    //     this.x,
-    //     this.y,
-    //     this.playerState.targetPosition.x,
-    //     this.playerState.targetPosition.y,
-    //     4
-    //   );
-    //   const targetDistance = Phaser.Math.Distance.Between(
-    //     this.x,
-    //     this.y,
-    //     this.playerState.targetPosition?.x,
-    //     this.playerState.targetPosition?.y   // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
-    //   );
-
-    //   if (targetDistance < 4) {
-    //     this.setPosition(this.x, this.y);
-    //   } else {
-    //     this.setPosition(pPosition.x, pPosition.y);
-
-    //   }
-
-    if (this.playerState.targetPosition) {
-      const pPosition = Utils.constantLerpPosition(
-        this.x,
-        this.y,
-        this.playerState.targetPosition.x,
-        this.playerState.targetPosition.y,
-        4
-      );
-      const targetDistance = Phaser.Math.Distance.Between(
-        this.x,
-        this.y,
-        this.playerState.targetPosition.x,
-        this.playerState.targetPosition.y   // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
-      );
-
-      if (targetDistance < 4) {
-        this.setPosition(this.playerState.targetPosition.x, this.playerState.targetPosition.y);
-      } else {
-        this.setPosition(pPosition.x, pPosition.y);
-
+    // LO NUEVO
+    const delay = Date.now() - this.serverDelay;
+    if (delay > 100 || !this.clientTargetPosition) {
+      this.setPosition(this.playerState.position.x, this.playerState.position.y);
+      this.setDepth(this.playerState.position.y);
+      if (this.playerState.targetPosition) {
+        this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
       }
-
     } else {
-      this.setPosition(this.x, this.y);
+      if (this.clientTargetPosition) {
+
+        const cpos = Utils.constantLerpPosition(
+          this.x,
+          this.y,
+          this.clientTargetPosition.x,
+          this.clientTargetPosition.y,
+          4
+        );
+
+        this.setPosition(cpos.x, cpos.y);
+
+        const cdistance = Phaser.Math.Distance.BetweenPoints(this, this.clientTargetPosition);
+        if (cdistance < 4) {
+          this.setPosition(this.playerState.position.x, this.playerState.position.y);
+          this.clientTargetPosition = undefined;
+        }
+
+        this.setDepth(this.y);
+        if (this.clientTargetPosition) {
+          this.setFlipX(this.clientTargetPosition?.x < this.x);
+        }
+      }
     }
+    // LO NUEVO
 
-
-    // }
+    // this.setPosition(this.playerState.position.x, this.playerState.position.y);
 
   }
 
@@ -269,16 +215,10 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
 
-  // LO DE LA PREDICCION
-  private lastInputProcessed: number;
-  private predictionThreshold: number = 50
-
-  public setLastInputProcessed() {
-    this.lastInputProcessed = Date.now();
-  }
-
-
-  public setTargetPosition(position: Position) {
-    this.playerState.targetPosition = position;
+  // PUBLIC LO NUEVO
+  private clientTargetPosition?: Position;
+  private serverDelay: number;
+  public setClientTargetPosition(targetPosition: Position) {
+    this.clientTargetPosition = targetPosition;
   }
 }
