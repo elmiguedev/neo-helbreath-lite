@@ -41,7 +41,27 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   public setPlayerState(playerState: Player) {
-    this.playerState = playerState;
+    const s: Player = {
+      armorClass: playerState.armorClass,
+      availablePoints: playerState.availablePoints,
+      color: playerState.color,
+      control: playerState.control,
+      experience: playerState.experience,
+      hasEnemiTarget: playerState.hasEnemiTarget,
+      hp: playerState.hp,
+      id: playerState.id,
+      maxHp: playerState.maxHp,
+      name: playerState.name,
+      position: playerState.position,
+      state: playerState.state,
+      hpCoolDown: playerState.hpCoolDown,
+      level: playerState.level,
+      nextLevelExperience: playerState.nextLevelExperience,
+      score: playerState.score,
+      stats: playerState.stats,
+      targetPosition: this.playerState.targetPosition
+    }
+    this.playerState = s;
     this.lastUpdate = Date.now();
   }
 
