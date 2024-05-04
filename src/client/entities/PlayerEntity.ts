@@ -1,4 +1,5 @@
 import { Player } from "../../domain/Player";
+import { Position } from "../../domain/Position";
 import { StatBar } from "../components/StatBar";
 import { Utils } from "../utils/Utils";
 
@@ -149,24 +150,26 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     var now = Date.now();
     var timeSinceLastInput = now - this.lastInputProcessed;
     if (timeSinceLastInput < this.predictionThreshold) {
-      const pPosition = Utils.constantLerpPosition(
-        this.x,
-        this.y,
-        this.velocityX,
-        this.velocityY,
-        4
-      );
-      this.setPosition(pPosition.x, pPosition.y);
-      const targetDistance = Phaser.Math.Distance.Between(
-        this.x,
-        this.y,
-        this.velocityX,
-        this.velocityY // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
-      );
-
-      if (targetDistance < 4) {
-        this.setPosition(this.playerState.targetPosition?.x, this.playerState.targetPosition?.y);
+      if (this.playerState.targetPosition) {
+        const pPosition = Utils.constantLerpPosition(
+          this.x,
+          this.y,
+          this.playerState.targetPosition.x,
+          this.playerState.targetPosition.y,
+          2
+        );
+        this.setPosition(pPosition.x, pPosition.y);
       }
+      // const targetDistance = Phaser.Math.Distance.Between(
+      //   this.x,
+      //   this.y,
+      //   this.velocityX,
+      //   this.velocityY // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
+      // );
+
+      // if (targetDistance < 4) {
+      //   this.setPosition(this.playerState.targetPosition?.x, this.playerState.targetPosition?.y);
+      // }
 
     }
 
@@ -213,17 +216,14 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   // LO DE LA PREDICCION
   private lastInputProcessed: number;
-  private velocityX: number;
-  private velocityY: number;
-  private predictionThreshold: number = 10
+  private predictionThreshold: number = 50
 
   public setLastInputProcessed() {
     this.lastInputProcessed = Date.now();
   }
 
 
-  public setClientVelocity(x: number, y: number) {
-    this.velocityX = x;
-    this.velocityY = y;
+  public setTargetPosition(position: Position) {
+    this.playerState.targetPosition = position;
   }
 }

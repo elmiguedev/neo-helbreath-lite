@@ -62,7 +62,8 @@ export class SocketManager {
       // }
 
       // antes de mandar, asigna la velocidad al player para que se mueva
-      player.setClientVelocity(position.x, position.y);
+      // player.setClientVelocity(position.x, position.y);
+      player.setTargetPosition(position)
 
       // finalmente envia la ubicacion
       this.socket.emit(PLAYER_MOVE_MESSAGE, position)
