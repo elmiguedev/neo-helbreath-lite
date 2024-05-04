@@ -139,7 +139,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
     // LO NUEVO
     const delay = Date.now() - this.serverDelay;
-    if (delay > 100 || !this.clientTargetPosition) {
+    if (delay > 200 || !this.clientTargetPosition) {
       this.setPosition(this.playerState.position.x, this.playerState.position.y);
       this.setDepth(this.playerState.position.y);
       if (this.playerState.targetPosition) {
