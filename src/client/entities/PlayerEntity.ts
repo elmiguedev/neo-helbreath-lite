@@ -141,7 +141,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private updatePosition() {
 
-    if (Date.now() - this.lastUpdate > 400) {
+    if (Date.now() - this.lastUpdate > 3000) {
       // TODAVIA ME FALTA VALIDAR SI HAY MUCHA DISTANCIA
       this.x += (this.playerState.position.x - this.x) * 0.3;
       this.y += (this.playerState.position.y - this.y) * 0.3;
