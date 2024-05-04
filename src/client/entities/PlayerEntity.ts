@@ -1,11 +1,13 @@
 import { Player } from "../../domain/Player";
 import { StatBar } from "../components/StatBar";
+import { Utils } from "../utils/Utils";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
   private playerLabel: Phaser.GameObjects.Text;
   private hpBar: StatBar;
   private hurtSound: Phaser.Sound.BaseSound;
+
 
   public onDie?: Function;
 
@@ -142,6 +144,32 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     if (this.playerState.targetPosition) {
       this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
     }
+
+    // la prediccion:
+    var now = Date.now();
+    var timeSinceLastInput = now - this.lastInputProcessed;
+    if (timeSinceLastInput < this.predictionThreshold) {
+      const pPosition = Utils.constantLerpPosition(
+        this.x,
+        this.y,
+        this.velocityX,
+        this.velocityY,
+        4
+      );
+      this.setPosition(pPosition.x, pPosition.y);
+      const targetDistance = Phaser.Math.Distance.Between(
+        this.x,
+        this.y,
+        this.velocityX,
+        this.velocityY // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
+      );
+
+      if (targetDistance < 4) {
+        this.setPosition(this.playerState.targetPosition?.x, this.playerState.targetPosition?.y);
+      }
+
+    }
+
   }
 
   private createHpBar() {
@@ -180,5 +208,22 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private createSounds() {
     this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
+  }
+
+
+  // LO DE LA PREDICCION
+  private lastInputProcessed: number;
+  private velocityX: number;
+  private velocityY: number;
+  private predictionThreshold: number = 10
+
+  public setLastInputProcessed() {
+    this.lastInputProcessed = Date.now();
+  }
+
+
+  public setClientVelocity(x: number, y: number) {
+    this.velocityX = x;
+    this.velocityY = y;
   }
 }
