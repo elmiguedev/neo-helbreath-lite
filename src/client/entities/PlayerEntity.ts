@@ -12,6 +12,9 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   public onDie?: Function;
 
+  private lastUpdate: number;
+
+
   constructor(scene: Phaser.Scene, playerState: Player) {
     super(scene, playerState.position.x, playerState.position.y, "player");
     this.playerState = playerState;
@@ -39,6 +42,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   public setPlayerState(playerState: Player) {
     this.playerState = playerState;
+    this.lastUpdate = Date.now();
   }
 
   public destroy(): void {
@@ -137,8 +141,10 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private updatePosition() {
 
-    this.x += (this.playerState.position.x - this.x) * 0.3;
-    this.y += (this.playerState.position.y - this.y) * 0.3;
+    if (Date.now() - this.lastUpdate > this.predictionThreshold) {
+      this.x += (this.playerState.position.x - this.x) * 0.3;
+      this.y += (this.playerState.position.y - this.y) * 0.3;
+    }
 
     // this.setPosition(thiss.playerState.position.x, this.playerState.position.y);
     this.setDepth(this.playerState.position.y);
@@ -147,31 +153,36 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     }
 
     // la prediccion:
-    var now = Date.now();
-    var timeSinceLastInput = now - this.lastInputProcessed;
-    if (timeSinceLastInput < this.predictionThreshold) {
-      if (this.playerState.targetPosition) {
-        const pPosition = Utils.constantLerpPosition(
-          this.x,
-          this.y,
-          this.playerState.targetPosition.x,
-          this.playerState.targetPosition.y,
-          2
-        );
-        this.setPosition(pPosition.x, pPosition.y);
-      }
-      // const targetDistance = Phaser.Math.Distance.Between(
-      //   this.x,
-      //   this.y,
-      //   this.velocityX,
-      //   this.velocityY // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
-      // );
+    // var now = Date.now();
+    // var timeSinceLastInput = now - this.lastInputProcessed;
+    // if (timeSinceLastInput < this.predictionThreshold) {
+    if (this.playerState.targetPosition) {
+      const pPosition = Utils.constantLerpPosition(
+        this.x,
+        this.y,
+        this.playerState.targetPosition.x,
+        this.playerState.targetPosition.y,
+        4
+      );
+      const targetDistance = Phaser.Math.Distance.Between(
+        this.x,
+        this.y,
+        this.playerState.targetPosition?.x,
+        this.playerState.targetPosition?.y   // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
+      );
 
-      // if (targetDistance < 4) {
-      //   this.setPosition(this.playerState.targetPosition?.x, this.playerState.targetPosition?.y);
-      // }
+      if (targetDistance < 4) {
+        this.setPosition(this.x, this.y);
+      } else {
+        this.setPosition(pPosition.x, pPosition.y);
+
+      }
+
 
     }
+
+
+    // }
 
   }
 
