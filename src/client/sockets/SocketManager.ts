@@ -66,9 +66,7 @@ export class SocketManager {
       player.setTargetPosition(position)
 
       // finalmente envia la ubicacion
-      this.socket.emit(PLAYER_MOVE_MESSAGE, position)
-
-      player.setLastInputProcessed();
+      // this.socket.emit(PLAYER_MOVE_MEs
     }
   }
 
