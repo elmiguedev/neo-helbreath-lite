@@ -141,22 +141,44 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private updatePosition() {
 
-    if (Date.now() - this.lastUpdate > 3000) {
-      // TODAVIA ME FALTA VALIDAR SI HAY MUCHA DISTANCIA
-      // this.x += (this.playerState.position.x - this.x) * 0.3;
-      // this.y += (this.playerState.position.y - this.y) * 0.3;
-    }
+    // if (Date.now() - this.lastUpdate > 3000) {
+    //   // TODAVIA ME FALTA VALIDAR SI HAY MUCHA DISTANCIA
+    //   // this.x += (this.playerState.position.x - this.x) * 0.3;
+    //   // this.y += (this.playerState.position.y - this.y) * 0.3;
+    // }
 
-    // this.setPosition(thiss.playerState.position.x, this.playerState.position.y);
-    this.setDepth(this.playerState.position.y);
-    if (this.playerState.targetPosition) {
-      this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
-    }
+    // // this.setPosition(thiss.playerState.position.x, this.playerState.position.y);
+    // this.setDepth(this.playerState.position.y);
+    // if (this.playerState.targetPosition) {
+    //   this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);
+    // }
 
-    // la prediccion:
-    // var now = Date.now();
-    // var timeSinceLastInput = now - this.lastInputProcessed;
-    // if (timeSinceLastInput < this.predictionThreshold) {
+    // // la prediccion:
+    // // var now = Date.now();
+    // // var timeSinceLastInput = now - this.lastInputProcessed;
+    // // if (timeSinceLastInput < this.predictionThreshold) {
+    // if (this.playerState.targetPosition) {
+    //   const pPosition = Utils.constantLerpPosition(
+    //     this.x,
+    //     this.y,
+    //     this.playerState.targetPosition.x,
+    //     this.playerState.targetPosition.y,
+    //     4
+    //   );
+    //   const targetDistance = Phaser.Math.Distance.Between(
+    //     this.x,
+    //     this.y,
+    //     this.playerState.targetPosition?.x,
+    //     this.playerState.targetPosition?.y   // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
+    //   );
+
+    //   if (targetDistance < 4) {
+    //     this.setPosition(this.x, this.y);
+    //   } else {
+    //     this.setPosition(pPosition.x, pPosition.y);
+
+    //   }
+
     if (this.playerState.targetPosition) {
       const pPosition = Utils.constantLerpPosition(
         this.x,
@@ -168,18 +190,19 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
       const targetDistance = Phaser.Math.Distance.Between(
         this.x,
         this.y,
-        this.playerState.targetPosition?.x,
-        this.playerState.targetPosition?.y   // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
+        this.playerState.targetPosition.x,
+        this.playerState.targetPosition.y   // REEMPLAZAR POR EL TARGET QUE YA TIENE VALOR
       );
 
       if (targetDistance < 4) {
-        this.setPosition(this.x, this.y);
+        this.setPosition(this.playerState.targetPosition.x, this.playerState.targetPosition.y);
       } else {
         this.setPosition(pPosition.x, pPosition.y);
 
       }
 
-
+    } else {
+      this.setPosition(this.x, this.y);
     }
 
 
