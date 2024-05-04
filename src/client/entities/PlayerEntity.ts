@@ -127,13 +127,17 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     if (this.playerLabel && this.playerLabel.active) {
       this.playerLabel.setPosition(this.x, this.y - 80);
       this.playerLabel.setAlign("center");
-      this.playerLabel.setText(`(${this.playerState.level})\n${this.playerState.name}`);
+      this.playerLabel.setText(`(${this.playerState.state})\n${this.playerState.name}`);
       this.playerLabel.setDepth(this.depth);
     }
   }
 
   private updatePosition() {
-    this.setPosition(this.playerState.position.x, this.playerState.position.y);
+
+    this.x += (this.playerState.position.x - this.x) * 0.3;
+    this.y += (this.playerState.position.y - this.y) * 0.3;
+
+    // this.setPosition(thiss.playerState.position.x, this.playerState.position.y);
     this.setDepth(this.playerState.position.y);
     if (this.playerState.targetPosition) {
       this.setFlipX(this.playerState.targetPosition?.x < this.playerState.position.x);

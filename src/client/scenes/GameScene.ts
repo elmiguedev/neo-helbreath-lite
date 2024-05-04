@@ -18,8 +18,6 @@ export class GameScene extends Scene {
     down: Phaser.Input.Keyboard.Key;
   }
 
-  private mouseObjects: any[];
-
   constructor() {
     super("GameScene");
   }
@@ -62,7 +60,7 @@ export class GameScene extends Scene {
 
   private createInput() {
     this.input.mouse?.disableContextMenu();
-    this.input.on("pointerdown", (pointer, gameObjects: any[]) => {
+    this.input.on("pointerdown", (pointer: any, gameObjects: any[]) => {
       if (gameObjects.length > 0) {
         if (gameObjects.length === 1) {
           const playerEntity: PlayerEntity = gameObjects[0];
@@ -82,7 +80,7 @@ export class GameScene extends Scene {
       }
     });
 
-    this.input.on("pointermove", (pointer, gameObjects: any[]) => {
+    this.input.on("pointermove", (pointer: any, gameObjects: any[]) => {
       if (pointer.isDown) {
         if (gameObjects.length > 0) {
           if (gameObjects.length === 1) {

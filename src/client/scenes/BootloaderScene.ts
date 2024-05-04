@@ -21,6 +21,13 @@ export class BootloaderScene extends Scene {
 
     this.load.aseprite("chobi", ChobiPng, ChobiJson);
 
+    // this.load.image("stat_button", "assets/sprites/ui/stat_button.png");
+    // this.load.aseprite("player", "assets/sprites/player/player.png", "assets/sprites/player/player.json");
+    // this.load.audio("hurt", "assets/sounds/hurt.ogg");
+    // this.load.audio("game", "assets/sounds/game.mp3");
+
+    // this.load.aseprite("chobi", "assets/sprites/monsters/chobi/chobi.png", "assets/sprites/monsters/chobi/chobi.json");
+
     this.load.on("complete", () => {
       this.scene.start("StartScene");
     })

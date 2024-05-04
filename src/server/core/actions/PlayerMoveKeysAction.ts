@@ -18,7 +18,7 @@ export class PlayerMoveKeysAction implements Action<PlayerMoveKeysActionProps, v
 
   public execute(input: PlayerMoveKeysActionProps): void {
     const player = this.gameState.players[input.playerId];
-    const step = 8;
+    const step = 16;
     if (!player) return;
     let dx = 0;
     let dy = 0;

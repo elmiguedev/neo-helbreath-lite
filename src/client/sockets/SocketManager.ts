@@ -6,7 +6,6 @@ import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler"
 import { PlayerEntity } from "../entities/PlayerEntity";
 import { Scene } from "phaser";
 import { GameHud } from "../huds/GameHud";
-import { GameState } from "./domain/GameState";
 import { PlayerStats } from "../../domain/Player";
 import { MonsterEntity } from "../entities/MonsterEntity";
 
@@ -18,7 +17,6 @@ export class SocketManager {
   private socket: Socket;
   private gameStateHandler: GameStateHandler;
   private playerDisconnectedHandler: PlayerDisconnectedHandler;
-  private gameState: GameState;
 
   constructor(
     private readonly scene: Scene,
