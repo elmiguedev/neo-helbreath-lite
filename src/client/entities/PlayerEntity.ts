@@ -183,7 +183,33 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
       }
 
     } else {
-      this.setPosition(this.playerState.position.x, this.playerState.position.y);
+      // this.setPosition(this.playerState.position.x, this.playerState.position.y);
+
+      const pos = Utils.constantLerpPosition(
+        this.x,
+        this.y,
+        this.playerState.position.x,
+        this.playerState.position.y,
+        4
+      );
+
+      // this.setPosition(pos.x, pos.y);
+      // this.setDepth(pos.y);
+      // this.setFlipX(this.playerState.position.x < this.x);
+
+      const dis = Utils.distanceBetweenPoints(
+        this.x,
+        this.y,
+        this.playerState.position.x,
+        this.playerState.position.y
+      );
+
+      if (dis < 4) {
+        this.setPosition(this.playerState.position.x, this.playerState.position.y);
+      } else {
+        this.setPosition(pos.x, pos.y);
+      }
+
       this.setDepth(this.y);
       if (this.playerState.targetPosition) {
         this.setFlipX(this.playerState.targetPosition.x < this.x);
