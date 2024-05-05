@@ -165,7 +165,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
         this.clientTargetPosition.y
       );
 
-      if (dis < 4) {
+      if (dis < 2) {
         this.setPosition(this.clientTargetPosition.x, this.clientTargetPosition.y);
         this.playerState.state = "idle";
       } else {
@@ -177,7 +177,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
         this.playerState.position
       )
 
-      if (disServ < 4) {
+      if (disServ < 2) {
         this.clientTargetPosition = undefined;
         this.setPosition(this.playerState.position.x, this.playerState.position.y);
       }
@@ -185,6 +185,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     } else {
       // this.setPosition(this.playerState.position.x, this.playerState.position.y);
 
+      // EL BUENO
       const pos = Utils.constantLerpPosition(
         this.x,
         this.y,
@@ -192,10 +193,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
         this.playerState.position.y,
         4
       );
-
-      // this.setPosition(pos.x, pos.y);
-      // this.setDepth(pos.y);
-      // this.setFlipX(this.playerState.position.x < this.x);
 
       const dis = Utils.distanceBetweenPoints(
         this.x,

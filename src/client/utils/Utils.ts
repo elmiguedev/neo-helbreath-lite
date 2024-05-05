@@ -15,8 +15,8 @@ const constantLerpPosition = (currentX: number, currentY: number, targetX: numbe
   const incrementY = (dy / distance) * speed;
 
   // Calcular y devolver la nueva posición
-  const newX = currentX + incrementX;
-  const newY = currentY + incrementY;
+  const newX = Math.floor(currentX + incrementX);
+  const newY = Math.floor(currentY + incrementY);
 
   return { x: newX, y: newY };
 };

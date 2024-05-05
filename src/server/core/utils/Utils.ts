@@ -36,8 +36,8 @@ const constantLerpPosition = (currentX: number, currentY: number, targetX: numbe
   const incrementY = (dy / distance) * speed;
 
   // Calcular y devolver la nueva posición
-  const newX = currentX + incrementX;
-  const newY = currentY + incrementY;
+  const newX = Math.floor(currentX + incrementX);
+  const newY = Math.floor(currentY + incrementY);
 
   return { x: newX, y: newY };
 };
@@ -46,10 +46,10 @@ const constantLerpPosition = (currentX: number, currentY: number, targetX: numbe
 const distanceBetweenPoints = (x1: number, y1: number, x2: number, y2: number) => {
   const dx = x2 - x1;
   const dy = y2 - y1;
-  return Math.sqrt(dx * dx + dy * dy);
+  return Math.floor(Math.sqrt(dx * dx + dy * dy));
 }
 
-const distanceBetween = (entity:Position, target:Position) => {
+const distanceBetween = (entity: Position, target: Position) => {
   return distanceBetweenPoints(
     entity.x,
     entity.y,
@@ -58,7 +58,7 @@ const distanceBetween = (entity:Position, target:Position) => {
   );
 }
 
-const throwDice = (count:number, faces:number) => {
+const throwDice = (count: number, faces: number) => {
   let sum = 0;
   for (let i = 0; i < count; i++) {
     sum += getRandomIntBetween(1, faces);

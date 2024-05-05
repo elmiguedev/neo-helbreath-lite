@@ -77,8 +77,19 @@ export class SocketManager {
   }
 
   public notifyPlayerKeysMove(keys: { left: boolean, right: boolean, up: boolean, down: boolean }) {
-    if (this.socket.connected) {
-      this.socket.emit(PLAYER_KEYS_MOVE_MESSAGE, keys);
+    if (this.socket.connected && this.socket.id) {
+      const player = this.players[this.socket.id];
+      if (player) {
+        const dx = keys.right ? 16 : keys.left ? -16 : 0;
+        const dy = keys.down ? 16 : keys.up ? -16 : 0;
+        if (dx === 0 && dy === 0) return;
+        player.setClientTargetPosition({
+          x: player.x + dx,
+          y: player.y + dy
+        })
+        this.socket.emit(PLAYER_KEYS_MOVE_MESSAGE, keys);
+      }
+
     }
   }
 
