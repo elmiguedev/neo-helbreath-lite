@@ -157,11 +157,19 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
       if (dis < 4) {
         this.setPosition(this.clientTargetPosition.x, this.clientTargetPosition.y);
-        this.clientTargetPosition = undefined;
       } else {
         this.setPosition(pos.x, pos.y);
       }
 
+      const disServ = Utils.distanceBetween(
+        this.clientTargetPosition,
+        this.playerState.position
+      )
+
+      if (disServ < 4) {
+        this.clientTargetPosition = undefined;
+        this.setPosition(this.playerState.position.x, this.playerState.position.y);
+      }
 
     } else {
       this.setPosition(this.playerState.position.x, this.playerState.position.y);
