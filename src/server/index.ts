@@ -71,8 +71,8 @@ socketServer.on("connection", (socket: Socket) => {
     socketServer.emit(PLAYER_DISCONNECTED_MESSAGE, socket.id);
   });
 
-  socket.on(PLAYER_MOVE_MESSAGE, (position: Position) => {
-    playerMoveAction.execute({ id: socket.id, position });
+  socket.on(PLAYER_MOVE_MESSAGE, (params: any) => {
+    playerMoveAction.execute({ id: socket.id, position: params.position, tickNumber: params.tickNumber });
   });
 
   socket.on(PLAYER_ATTACK_MESSAGE, (id: string) => {

@@ -37,7 +37,8 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       hpCoolDown: PLAYER_HP_COOLDOWN,
       control: {
         hpCoolDown: 0
-      }
+      },
+      tickNumber: 0
     });
     this.gameState.players[input.id] = player;
   }
