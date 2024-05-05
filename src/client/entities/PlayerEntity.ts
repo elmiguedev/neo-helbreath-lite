@@ -136,6 +136,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private updatePosition() {
     if (this.clientTargetPosition) {
+      this.playerState.state = "walk";
+
       const pos = Utils.constantLerpPosition(
         this.x,
         this.y,
@@ -145,8 +147,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
       );
 
       // this.setPosition(pos.x, pos.y);
-      // this.setDepth(pos.y);
-      // this.setFlipX(this.clientTargetPosition.x < this.x);
+      this.setDepth(pos.y);
+      this.setFlipX(this.clientTargetPosition.x < this.x);
 
       const dis = Utils.distanceBetweenPoints(
         this.x,
@@ -232,7 +234,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   // --------------------------
   private clientTargetPosition?: Position;
   public setClientTargetPosition(position: Position) {
-    this.playerState.state = "walk";
     this.clientTargetPosition = position;
   }
 }
