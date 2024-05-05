@@ -8,6 +8,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerLabel: Phaser.GameObjects.Text;
   private hpBar: StatBar;
   private hurtSound: Phaser.Sound.BaseSound;
+  private mainPlayer: boolean = false;
 
   public onDie?: Function;
 
@@ -21,6 +22,10 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     this.createLabel();
     this.createHpBar()
     this.createSounds();
+  }
+
+  public setMainPlayer(mainPlayer: boolean) {
+    this.mainPlayer = mainPlayer;
   }
 
   public update() {
@@ -90,6 +95,9 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private playHurtAnimation() {
+    // if (this.mainPlayer) {
+    this.scene.cameras.main.shake(30, 0.002);
+    // }
     if (!this.hurtSound.isPlaying) {
       this.hurtSound.play({ delay: 0.1 });
     }
@@ -159,6 +167,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
       if (dis < 4) {
         this.setPosition(this.clientTargetPosition.x, this.clientTargetPosition.y);
+        this.playerState.state = "idle";
       } else {
         this.setPosition(pos.x, pos.y);
       }

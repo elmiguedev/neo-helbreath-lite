@@ -25,6 +25,7 @@ export class GameStateHandler {
       if (!this.players[key]) {
         this.players[key] = new PlayerEntity(this.scene, player);
         if (key === this.socketManager.getId()) {
+          this.players[key].setMainPlayer(true);
           this.scene.cameras.main.startFollow(this.players[key]);
           this.players[key].onDie = () => {
             this.socketManager.disconnect();
