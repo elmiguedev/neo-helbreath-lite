@@ -30,7 +30,7 @@ export class GameScene extends Scene {
     this.createGameHud();
     this.createSocketManager();
     this.createBackground();
-    this.createMusic();
+    // this.createMusic();
     this.createInput();
     this.createKeyInputs();
   }

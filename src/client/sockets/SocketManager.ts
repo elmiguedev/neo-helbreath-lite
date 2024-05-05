@@ -49,7 +49,11 @@ export class SocketManager {
 
   public notifyPlayerMove(position: Position) {
     if (this.socket.connected && this.socket.id) {
-      this.socket.emit(PLAYER_MOVE_MESSAGE, position)
+      const player = this.players[this.socket.id];
+      if (player) {
+        player.setClientTargetPosition(position);
+        this.socket.emit(PLAYER_MOVE_MESSAGE, position)
+      }
     }
   }
 

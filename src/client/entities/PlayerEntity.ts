@@ -1,5 +1,7 @@
 import { Player } from "../../domain/Player";
+import { Position } from "../../domain/Position";
 import { StatBar } from "../components/StatBar";
+import { Utils } from "../utils/Utils";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
@@ -133,11 +135,51 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private updatePosition() {
-    this.setPosition(this.playerState.position.x, this.playerState.position.y);
-    this.setDepth(this.y);
-    if (this.playerState.targetPosition) {
-      this.setFlipX(this.playerState.targetPosition.x < this.x);
+    if (this.clientTargetPosition) {
+      const pos = Utils.constantLerpPosition(
+        this.x,
+        this.y,
+        this.clientTargetPosition.x,
+        this.clientTargetPosition.y,
+        4
+      );
+
+      // this.setPosition(pos.x, pos.y);
+      // this.setDepth(pos.y);
+      // this.setFlipX(this.clientTargetPosition.x < this.x);
+
+      const dis = Utils.distanceBetweenPoints(
+        this.x,
+        this.y,
+        this.clientTargetPosition.x,
+        this.clientTargetPosition.y
+      );
+
+      if (dis < 4) {
+        this.setPosition(this.clientTargetPosition.x, this.clientTargetPosition.y);
+        this.clientTargetPosition = undefined;
+      } else {
+
+      } this.setPosition(pos.x, pos.y);
+
+
+    } else {
+      this.setPosition(this.playerState.position.x, this.playerState.position.y);
+      this.setDepth(this.y);
+      if (this.playerState.targetPosition) {
+        this.setFlipX(this.playerState.targetPosition.x < this.x);
+      }
     }
+
+    // ORIGINAL CODE
+    // ----------------
+    // this.setPosition(this.playerState.position.x, this.playerState.position.y);
+    // this.setDepth(this.y);
+    // if (this.playerState.targetPosition) {
+    //   this.setFlipX(this.playerState.targetPosition.x < this.x);
+    // }
+    // ----------------
+    // ORIGINAL CODE
   }
 
   private createHpBar() {
@@ -178,4 +220,10 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
   }
 
+  // LO NUEVO
+  // --------------------------
+  private clientTargetPosition?: Position;
+  public setClientTargetPosition(position: Position) {
+    this.clientTargetPosition = position;
+  }
 }
