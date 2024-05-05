@@ -55,6 +55,10 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     return this.playerState.state;
   }
 
+  public getPlayerState() {
+    return this.playerState;
+  }
+
   private updateAnimations() {
     switch (this.playerState.state) {
       case 'dead': this.die(); break;
