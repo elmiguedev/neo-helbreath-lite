@@ -80,8 +80,8 @@ export class SocketManager {
     if (this.socket.connected && this.socket.id) {
       const player = this.players[this.socket.id];
       if (player) {
-        const dx = keys.right ? 32 : keys.left ? -32 : 0;
-        const dy = keys.down ? 32 : keys.up ? -32 : 0;
+        const dx = keys.right ? 6 : keys.left ? -6 : 0;
+        const dy = keys.down ? 6 : keys.up ? -6 : 0;
         if (dx === 0 && dy === 0) return;
         player.setClientTargetPosition({
           x: player.getPlayerState().position.x + dx,
