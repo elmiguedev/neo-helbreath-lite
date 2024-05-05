@@ -159,8 +159,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
         this.setPosition(this.clientTargetPosition.x, this.clientTargetPosition.y);
         this.clientTargetPosition = undefined;
       } else {
-
-      } this.setPosition(pos.x, pos.y);
+        this.setPosition(pos.x, pos.y);
+      }
 
 
     } else {
