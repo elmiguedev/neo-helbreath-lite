@@ -49,22 +49,7 @@ export class SocketManager {
 
   public notifyPlayerMove(position: Position) {
     if (this.socket.connected && this.socket.id) {
-
-      // creo el param que va al server con la posicino
-      // y el nuevo tick
-      const player = this.players[this.socket.id];
-
-      const params = {
-        tickNumber: player.inputTickNumber,
-        position: position
-      }
-
-      // mando al server
-      this.socket.emit(PLAYER_MOVE_MESSAGE, params);
-
-      // por ultimo actualizo la posicion del client con
-      // la del coso  
-      player.setClientTargetPosition(position)
+      this.socket.emit(PLAYER_MOVE_MESSAGE, position)
     }
   }
 

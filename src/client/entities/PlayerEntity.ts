@@ -1,7 +1,5 @@
 import { Player } from "../../domain/Player";
-import { Position } from "../../domain/Position";
 import { StatBar } from "../components/StatBar";
-import { Utils } from "../utils/Utils";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private playerState: Player;
@@ -10,10 +8,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   private hurtSound: Phaser.Sound.BaseSound;
 
   public onDie?: Function;
-
-  private clientStateBuffer: any[] = [];
-  private clientInputBuffer: any[] = [];
-  public inputTickNumber = 0;
 
   constructor(scene: Phaser.Scene, playerState: Player) {
     super(scene, playerState.position.x, playerState.position.y, "player");
@@ -33,7 +27,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
       this.updateAnimations();
       this.updateLabel();
       this.updateHpBar();
-      ++this.inputTickNumber;
     }
   }
 
@@ -43,7 +36,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   public setPlayerState(playerState: Player) {
     this.playerState = playerState;
-    this.serverDelay = Date.now();
   }
 
   public destroy(): void {
@@ -141,63 +133,11 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private updatePosition() {
-    // 1. obtengo el state (ya lo tengo)
-    if (this.clientTargetPosition) {
-
-      const newPosition = Utils.constantLerpPosition(
-        this.x,
-        this.y,
-        this.clientTargetPosition?.x,
-        this.clientTargetPosition?.y,
-        4
-      );
-      this.setPosition(newPosition.x, newPosition.y);
-      const distance = Utils.distanceBetween(newPosition, this.clientTargetPosition);
-      if (distance < 4) {
-        this.setPosition(this.clientTargetPosition.x, this.clientTargetPosition.y);
-        this.clientTargetPosition = undefined;
-      }
-
-    } else {
-      if (this.playerState.position) {
-        this.setPosition(this.playerState.position.x, this.playerState.position.y);
-      }
+    this.setPosition(this.playerState.position.x, this.playerState.position.y);
+    this.setDepth(this.y);
+    if (this.playerState.targetPosition) {
+      this.setFlipX(this.playerState.targetPosition.x < this.x);
     }
-    // 2. calculo el index dentro del buffer
-    const bufferSlot = this.playerState.tickNumber % 512;
-
-    // 3. calculo el error
-    const xError = this.playerState.position.x - this.clientStateBuffer[bufferSlot]?.position.x || 0;
-    const yError = this.playerState.position.y - this.clientStateBuffer[bufferSlot]?.position.y || 0;
-    const error = Math.sqrt(xError * xError + yError * yError);
-
-    if (error > 4) {
-      // 4. si el error supera un cierto  umbral, rewind y actualizo con server
-      // this.setPosition(this.playerState.position.x, this.playerState.position.y);
-      const newPosition = Utils.constantLerpPosition(
-        this.x,
-        this.y,
-        this.playerState.position.x,
-        this.playerState.position.y,
-        4
-      );
-
-      // 5. como el tickNumber dle state y no del input. 
-      let rewindTickNumber = this.playerState.tickNumber;
-
-      // 6. recorremos todos los buffers y actualizamos los ticks
-      while (rewindTickNumber < this.inputTickNumber) {
-        const rewindBufferSlot = rewindTickNumber % 512;
-        const rewindClientState = this.clientStateBuffer[rewindBufferSlot];
-        if (rewindClientState) {
-          this.clientInputBuffer[rewindBufferSlot] = this.clientTargetPosition;
-          this.clientStateBuffer[rewindBufferSlot].position = newPosition;
-          this.setPosition(newPosition.x, newPosition.y);
-        }
-        ++rewindTickNumber;
-      }
-    }
-
   }
 
   private createHpBar() {
@@ -238,11 +178,4 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
   }
 
-
-  // PUBLIC LO NUEVO
-  private clientTargetPosition?: Position;
-  private serverDelay: number;
-  public setClientTargetPosition(targetPosition: Position) {
-    this.clientTargetPosition = targetPosition;
-  }
 }

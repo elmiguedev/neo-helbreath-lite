@@ -38,7 +38,6 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       control: {
         hpCoolDown: 0
       },
-      tickNumber: 0
     });
     this.gameState.players[input.id] = player;
   }
