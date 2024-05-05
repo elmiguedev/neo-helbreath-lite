@@ -232,6 +232,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   // --------------------------
   private clientTargetPosition?: Position;
   public setClientTargetPosition(position: Position) {
+    this.playerState.state = "walk";
     this.clientTargetPosition = position;
   }
 }
