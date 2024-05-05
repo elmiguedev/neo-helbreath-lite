@@ -5,6 +5,7 @@ import { Utils } from "../utils/Utils";
 
 export class PlayerEntity {
   public playerState: Player;
+  private inputTickNumber: number = 0;
 
   constructor(playerState: Player) {
     this.playerState = playerState
@@ -109,6 +110,7 @@ export class PlayerEntity {
     );
 
     this.setPosition(position);
+    this.playerState.tickNumber = this.inputTickNumber + 1;
 
     const targetDistance = Utils.distanceBetweenPoints(
       position.x,
@@ -193,6 +195,11 @@ export class PlayerEntity {
     this.increaseHp(
       2 + (this.playerState.stats.vitality * 5)
     )
+  }
+
+  // LO NUEVO
+  public setInputTickNumber(value: number) {
+    this.inputTickNumber = value;
   }
 
 }

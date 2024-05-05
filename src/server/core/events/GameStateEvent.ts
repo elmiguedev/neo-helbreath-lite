@@ -11,7 +11,7 @@ export class GameStateEvent {
     this.gameState.players
     return {
       players: this.mapPlayerEntitiesMapToPlayerMap(this.gameState.players),
-      monsters: this.mapMonstersEntitiesMapToMonstersMap(this.gameState.monsters)
+      monsters: this.mapMonstersEntitiesMapToMonstersMap(this.gameState.monsters),
     };
   }
 

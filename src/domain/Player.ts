@@ -13,6 +13,8 @@ export interface PlayerControl {
 }
 
 export interface Player {
+  tickNumber: number;
+
   id: string;
   name: string;
   color: number;
