@@ -147,83 +147,15 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private updatePosition() {
-    if (this.clientTargetPosition) {
-      this.playerState.state = "walk";
 
-      const pos = Utils.constantLerpPosition(
-        this.x,
-        this.y,
-        this.clientTargetPosition.x,
-        this.clientTargetPosition.y,
-        4
-      );
-
-      // this.setPosition(pos.x, pos.y);
-      this.setDepth(pos.y);
-      this.setFlipX(this.clientTargetPosition.x < this.x);
-
-      const dis = Utils.distanceBetweenPoints(
-        this.x,
-        this.y,
-        this.clientTargetPosition.x,
-        this.clientTargetPosition.y
-      );
-
-      if (dis < 2) {
-        this.setPosition(this.clientTargetPosition.x, this.clientTargetPosition.y);
-        this.playerState.state = "idle";
-      } else {
-        this.setPosition(pos.x, pos.y);
-      }
-
-      const disServ = Utils.distanceBetween(
-        this.clientTargetPosition,
-        this.playerState.position
-      )
-
-      if (disServ < 2) {
-        this.clientTargetPosition = undefined;
-        this.setPosition(this.playerState.position.x, this.playerState.position.y);
-      }
-
-    } else {
-      // this.setPosition(this.playerState.position.x, this.playerState.position.y);
-
-      // EL BUENO
-      const pos = Utils.constantLerpPosition(
-        this.x,
-        this.y,
-        this.playerState.position.x,
-        this.playerState.position.y,
-        4
-      );
-
-      const dis = Utils.distanceBetweenPoints(
-        this.x,
-        this.y,
-        this.playerState.position.x,
-        this.playerState.position.y
-      );
-
-      if (dis < 4) {
-        this.setPosition(this.playerState.position.x, this.playerState.position.y);
-      } else {
-        this.setPosition(pos.x, pos.y);
-      }
-
-      this.setDepth(this.y);
-      if (this.playerState.targetPosition) {
-        this.setFlipX(this.playerState.targetPosition.x < this.x);
-      }
-    }
 
     // ORIGINAL CODE
     // ----------------
-    // this.setPosition(this.playerState.position.x, this.playerState.position.y);
-    // this.setDepth(this.y);
-    // if (this.playerState.targetPosition) {
-    //   this.setFlipX(this.playerState.targetPosition.x < this.x);
-    // }
+    this.setPosition(this.playerState.position.x, this.playerState.position.y);
+    this.setDepth(this.y);
+    if (this.playerState.targetPosition) {
+      this.setFlipX(this.playerState.targetPosition.x < this.x);
+    }
     // ----------------
     // ORIGINAL CODE
   }
