@@ -36,8 +36,34 @@ const distanceBetween = (entity: Position, target: Position) => {
   );
 }
 
+const lerpPosition = (x1: number, y1: number, x2: number, y2: number, t: number) => {
+  return {
+    x: x1 + (x2 - x1) * t,
+    y: y1 + (y2 - y1) * t
+  }
+}
+
+const moveTowardsTarget = (currentX: number, currentY: number, targetX: number, targetY: number, speed: number) => {
+  const dx = targetX - currentX;
+  const dy = targetY - currentY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  if (distance <= speed) {
+    // Si estamos muy cerca del objetivo, simplemente movemos al jugador al objetivo
+    return { x: targetX, y: targetY };
+  } else {
+    // Calculamos la proporción de movimiento en cada eje
+    const ratio = speed / distance;
+    const newX = currentX + dx * ratio;
+    const newY = currentY + dy * ratio;
+    return { x: newX, y: newY };
+  }
+};
+
 export const Utils = {
   constantLerpPosition,
   distanceBetweenPoints,
-  distanceBetween
+  distanceBetween,
+  lerpPosition,
+  moveTowardsTarget
 }

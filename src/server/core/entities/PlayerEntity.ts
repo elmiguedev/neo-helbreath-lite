@@ -100,13 +100,22 @@ export class PlayerEntity {
   public updatePosition() {
     if (!this.playerState.targetPosition) return;
 
-    const position = Utils.constantLerpPosition(
+    // const position = Utils.constantLerpPosition(
+    //   this.playerState.position.x,
+    //   this.playerState.position.y,
+    //   this.playerState.targetPosition!.x,
+    //   this.playerState.targetPosition!.y,
+    //   PLAYER_MAX_SPEED
+    // );
+
+    const position = Utils.moveTowardsTarget(
       this.playerState.position.x,
       this.playerState.position.y,
       this.playerState.targetPosition!.x,
       this.playerState.targetPosition!.y,
-      PLAYER_MAX_SPEED
+      4
     );
+
 
     this.setPosition(position);
 

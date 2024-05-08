@@ -12,6 +12,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   public onDie?: Function;
 
+
+
   constructor(scene: Phaser.Scene, playerState: Player) {
     super(scene, playerState.position.x, playerState.position.y, "player");
     this.playerState = playerState;
@@ -148,14 +150,18 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
   private updatePosition() {
 
+    // 1. si tiene clientTargetPosition quiere decir que queremos
+    // predecir la ubicacion
+    this.updateClientPosition();
+
 
     // ORIGINAL CODE
     // ----------------
-    this.setPosition(this.playerState.position.x, this.playerState.position.y);
-    this.setDepth(this.y);
-    if (this.playerState.targetPosition) {
-      this.setFlipX(this.playerState.targetPosition.x < this.x);
-    }
+    // this.setPosition(this.playerState.position.x, this.playerState.position.y);
+    // this.setDepth(this.y);
+    // if (this.playerState.targetPosition) {
+    //   this.setFlipX(this.playerState.targetPosition.x < this.x);
+    // }
     // ----------------
     // ORIGINAL CODE
   }
@@ -201,7 +207,132 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   // LO NUEVO
   // --------------------------
   private clientTargetPosition?: Position;
+  private clientHasEnemyTarget: boolean = false;
   public setClientTargetPosition(position: Position) {
     this.clientTargetPosition = position;
   }
+
+  public setClientEnemyTarget(value: boolean) {
+    this.clientHasEnemyTarget = value;
+  }
+
+  private updateClientPosition() {
+    if (this.isDead()) return;
+    if (this.clientTargetPosition) {
+      this.moveClientPlayer();
+    } else {
+      this.moveServerPlayer();
+    }
+  }
+
+
+  private validationCount = 0;
+  private moveClientPlayer() {
+    if (!this.clientTargetPosition) return;
+
+    const position = Utils.moveTowardsTarget(
+      this.x,
+      this.y,
+      this.clientTargetPosition!.x,
+      this.clientTargetPosition!.y,
+      4
+    );
+
+
+
+    if (!this.isOnRange(position)) {
+
+      this.setPosition(position.x, position.y);
+
+    } else
+    // const targetDistance = Utils.distanceBetweenPoints(
+    //   position.x,
+    //   position.y,
+    //   this.clientTargetPosition.x,
+    //   this.clientTargetPosition.y
+    // );
+
+    // console.log(targetDistance < this.getTargetValidationDistance())
+
+    // if (targetDistance < this.getTargetValidationDistance()) {
+    {
+      // this.setPosition(position.x, position.y);
+      // this.clientTargetPosition = undefined
+
+      if (position === this.playerState.position) {
+        this.validationCount = 0;
+        this.setPosition(this.playerState.position.x, this.playerState.position.y);
+      } else {
+        this.validationCount++;
+        if (this.validationCount > 1000) {
+          this.validationCount = 0;
+          this.clientTargetPosition = undefined
+          this.setPosition(this.playerState.position.x, this.playerState.position.y);
+        }
+      }
+    }
+
+    this.setDepth(this.y + 10);
+    if (this.clientTargetPosition) {
+      this.setFlipX(this.clientTargetPosition.x < this.x);
+    }
+  }
+
+  private moveServerPlayer() {
+    if (!this.playerState.targetPosition) return;
+
+    const position = Utils.moveTowardsTarget(
+      this.playerState.position.x,
+      this.playerState.position.y,
+      this.playerState.targetPosition!.x,
+      this.playerState.targetPosition!.y,
+      4
+    );
+
+    if (!this.serverIsOnRange(position)) {
+      this.setPosition(position.x, position.y);
+    } else {
+      this.setPosition(this.playerState.position.x, this.playerState.position.y);
+    }
+
+    this.setDepth(this.y + 10);
+    if (this.playerState.targetPosition) {
+      this.setFlipX(this.playerState.targetPosition.x < this.playerState.position.x);
+    }
+  }
+
+  private getTargetValidationDistance() {
+    return this.clientHasEnemyTarget
+      ? 70
+      : 4
+  }
+
+  private isOnRange(position: Position) {
+    if (!this.clientTargetPosition) return false;
+    const targetDistance = Utils.distanceBetweenPoints(
+      position.x,
+      position.y,
+      this.clientTargetPosition.x,
+      this.clientTargetPosition.y
+    );
+
+    return targetDistance < this.getTargetValidationDistance();
+  }
+
+  private serverIsOnRange(position: Position) {
+    if (!this.playerState.targetPosition) return false;
+    const targetDistance = Utils.distanceBetweenPoints(
+      position.x,
+      position.y,
+      this.playerState.targetPosition.x,
+      this.playerState.targetPosition.y
+    );
+
+    return targetDistance < this.getTargetValidationDistance();
+  }
+
+  private isDead() {
+    return this.playerState.state === "dead";
+  }
+
 }

@@ -8,6 +8,7 @@ import { Scene } from "phaser";
 import { GameHud } from "../huds/GameHud";
 import { PlayerStats } from "../../domain/Player";
 import { MonsterEntity } from "../entities/MonsterEntity";
+import { Utils } from "../utils/Utils";
 
 const DEFAULT_SERVER_URL = "/";
 // @ts-ignore
@@ -58,9 +59,25 @@ export class SocketManager {
   }
 
   public notifyPlayerAttack(id: string) {
-    if (this.socket.connected) {
-      if (this.players[id].getState() !== "attack")
+    if (this.socket.connected && this.socket.id) {
+      const player = this.players[this.socket.id];
+      const enemy = this.players[id];
+      if (!player || !enemy) return;
+      if (player.getState() !== "attack") {
+
+        const distance = Utils.distanceBetween(
+          player,
+          enemy
+        );
+        if (distance > 80) {
+          player.setClientEnemyTarget(true);
+          player.setClientTargetPosition({
+            x: enemy.x,
+            y: enemy.y
+          });
+        }
         this.socket.emit(PLAYER_ATTACK_MESSAGE, id);
+      }
     }
   }
 
@@ -80,9 +97,10 @@ export class SocketManager {
     if (this.socket.connected && this.socket.id) {
       const player = this.players[this.socket.id];
       if (player) {
-        const dx = keys.right ? 16 : keys.left ? -16 : 0;
-        const dy = keys.down ? 16 : keys.up ? -16 : 0;
+        const dx = keys.right ? 32 : keys.left ? -32 : 0;
+        const dy = keys.down ? 32 : keys.up ? -32 : 0;
         if (dx === 0 && dy === 0) return;
+        player.setClientEnemyTarget(false);
         player.setClientTargetPosition({
           x: player.getPlayerState().position.x + dx,
           y: player.getPlayerState().position.y + dy
