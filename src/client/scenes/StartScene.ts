@@ -5,9 +5,14 @@ import { Button } from "../components/Button";
 export class StartScene extends Scene {
   private nameTextField: TextField;
   private playButton: Button;
+  private name?: string;
 
   constructor() {
     super("StartScene");
+  }
+
+  init(data: any) {
+    this.name = data.name
   }
 
   create() {
@@ -25,6 +30,9 @@ export class StartScene extends Scene {
     const x = this.game.canvas.width / 2;
     const y = 200;
     this.nameTextField = new TextField(this, x, y);
+    if (this.name) {
+      this.nameTextField.setText(this.name);
+    }
     this.nameTextField.onKeyEnter = () => {
       this.startGame();
     }

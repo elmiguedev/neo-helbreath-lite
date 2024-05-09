@@ -40,4 +40,8 @@ export class TextField extends Phaser.GameObjects.Container {
   public getText() {
     return this.txt.value;
   }
+
+  public setText(value: string) {
+    this.txt.value = value;
+  }
 }

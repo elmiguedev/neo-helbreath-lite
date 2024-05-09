@@ -40,6 +40,10 @@ export class SocketManager {
       this.playerDisconnectedHandler = new PlayerDisconnectedHandler(this.players);
       this.socket.on(GAME_STATE_MESSAGE, this.gameStateHandler.execute.bind(this.gameStateHandler));
       this.socket.on(PLAYER_DISCONNECTED_MESSAGE, this.playerDisconnectedHandler.execute.bind(this.playerDisconnectedHandler))
+      this.socket.on("disconnect", () => {
+        this.scene.scene.stop();
+        this.scene.scene.start("StartScene", { name: this.playerName });
+      });
     })
 
   }

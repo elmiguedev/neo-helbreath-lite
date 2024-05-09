@@ -29,7 +29,10 @@ export class GameStateHandler {
           this.scene.cameras.main.startFollow(this.players[key]);
           this.players[key].onDie = () => {
             this.socketManager.disconnect();
-            this.scene.scene.restart();
+            this.scene.scene.stop("GameHud");
+            this.scene.scene.start("StartScene", {
+              name: this.players[key].getPlayerState().name
+            });
           }
         } else {
           this.players[key].onDie = () => {
