@@ -2,10 +2,13 @@ import { Scene } from "phaser";
 import { GameState } from "../sockets/domain/GameState";
 import { PlayerStatBar } from "../components/PlayerStatBar";
 import { PlayerStats } from "../../domain/Player";
+import { ToggleButton } from "../components/ToggleButton";
 
 export class GameHud extends Scene {
   private gameState: GameState;
   private playerId: string;
+  private disableMouseMovementButton: ToggleButton;
+  public disableMouseMovement: boolean = false;
 
   private txtPlayers: Phaser.GameObjects.Text;
   private vitalityBar: PlayerStatBar;
@@ -23,6 +26,7 @@ export class GameHud extends Scene {
     this.createPlayers();
     this.createTestText();
     this.createStatBars();
+    this.createDisableMouseMovementButton();
   }
 
   update() {
@@ -158,5 +162,16 @@ export class GameHud extends Scene {
     this.strengthBar.setEnabled(player.availablePoints > 0)
   }
 
-
+  private createDisableMouseMovementButton() {
+    this.disableMouseMovementButton = new ToggleButton(
+      this,
+      this.game.canvas.width / 2,
+      this.game.canvas.height - 60,
+      "Enable Mouse Movement",
+      "Disable Mouse Movement"
+    );
+    this.disableMouseMovementButton.onToggle = (value: boolean) => {
+      this.disableMouseMovement = value;
+    }
+  }
 }

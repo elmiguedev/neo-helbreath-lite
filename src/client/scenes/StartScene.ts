@@ -41,7 +41,7 @@ export class StartScene extends Scene {
   private createPlayButton() {
     const x = this.game.canvas.width / 2;
     const y = 270;
-    this.playButton = new Button(this, x, y);
+    this.playButton = new Button(this, x, y, "Play");
     this.playButton.onClick = () => {
       this.startGame();
     }

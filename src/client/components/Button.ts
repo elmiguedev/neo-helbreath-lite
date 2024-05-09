@@ -2,11 +2,18 @@ export class Button extends Phaser.GameObjects.Container {
   private button: HTMLButtonElement;
   private dom: Phaser.GameObjects.DOMElement;
   public onClick?: Function;
+  private text: string;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, text?: string) {
     super(scene, x, y);
+    this.text = text || "";
     this.scene.add.existing(this);
     this.createInputText();
+  }
+
+  public setText(value: string) {
+    this.text = value;
+    this.button.textContent = this.text;
   }
 
   private createInputText() {
@@ -27,7 +34,8 @@ export class Button extends Phaser.GameObjects.Container {
     this.button.style.fontSize = "24px";
     this.button.style.textAlign = "center";
     this.button.style.color = "black";
-    this.button.textContent = "Play";
+    this.button.style.outline = "none";
+    this.button.textContent = this.text;
 
     this.button.onmouseenter = () => {
       this.button.style.backgroundColor = OVER_COLOR;

@@ -53,7 +53,7 @@ export class SocketManager {
   }
 
   public notifyPlayerMove(position: Position) {
-    if (this.socket.connected && this.socket.id) {
+    if (this.socket.connected && this.socket.id && !this.gameHud.disableMouseMovement) {
       const player = this.players[this.socket.id];
       if (player) {
         player.setClientTargetPosition(position);
