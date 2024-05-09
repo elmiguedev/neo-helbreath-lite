@@ -101,9 +101,9 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private playHurtAnimation() {
-    // if (this.mainPlayer) {
-    this.scene.cameras.main.shake(30, 0.002);
-    // }
+    if (this.mainPlayer) {
+      this.scene.cameras.main.shake(30, 0.002);
+    }
     if (!this.hurtSound.isPlaying) {
       this.hurtSound.play({ delay: 0.1 });
     }

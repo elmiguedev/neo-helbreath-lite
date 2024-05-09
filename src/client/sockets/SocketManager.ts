@@ -81,6 +81,8 @@ export class SocketManager {
           });
         }
         this.socket.emit(PLAYER_ATTACK_MESSAGE, id);
+        this.scene.cameras.main.shake(30, 0.002);
+
       }
     }
   }
