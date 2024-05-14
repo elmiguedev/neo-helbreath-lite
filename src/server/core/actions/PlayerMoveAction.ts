@@ -1,5 +1,5 @@
-import { GameState } from "../../../domain/GameState";
-import { Position } from "../../../domain/Position";
+import { Game } from "../Game";
+import { Position } from "../entities/Poisition";
 import { Action } from "./Action";
 
 export interface PlayerMoveActionParams {
@@ -7,12 +7,10 @@ export interface PlayerMoveActionParams {
   position: Position;
 }
 export class PlayerMoveAction implements Action<PlayerMoveActionParams, void> {
-  constructor(private readonly gameState: GameState) { }
+  constructor(private readonly game: Game) { }
 
   public execute(params: PlayerMoveActionParams): void {
-    const player = this.gameState.players[params.id];
-    if (player && player.playerState.targetPosition !== params.position) {
-      player.setTargetPosition(params.position);
-    }
+    const player = this.game.players[params.id];
+    player.setTargetPosition(params.position);
   }
 }

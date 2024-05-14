@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { Monster } from "../../domain/Monster";
+import { Monster } from "../sockets/domain/Monster";
 
 export class MonsterEntity extends Phaser.GameObjects.Sprite {
   public monsterState: Monster;

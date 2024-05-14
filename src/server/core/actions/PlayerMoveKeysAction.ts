@@ -1,4 +1,5 @@
-import { GameState } from "../../../domain/GameState";
+import { Game } from "../Game";
+import { PLAYER_KEY_DISTANCE } from "../utils/Constants";
 import { Action } from "./Action";
 
 export interface PlayerMoveKeysActionProps {
@@ -13,18 +14,18 @@ export interface PlayerMoveKeysActionProps {
 
 export class PlayerMoveKeysAction implements Action<PlayerMoveKeysActionProps, void> {
   constructor(
-    private readonly gameState: GameState
+    private readonly game: Game
   ) { }
 
   public execute(input: PlayerMoveKeysActionProps): void {
-    const player = this.gameState.players[input.playerId];
+    const player = this.game.players[input.playerId];
     if (!player) return;
-    const dx = input.keys.right ? 32 : input.keys.left ? -32 : 0;
-    const dy = input.keys.down ? 32 : input.keys.up ? -32 : 0;
+    const dx = input.keys.right ? PLAYER_KEY_DISTANCE : input.keys.left ? -PLAYER_KEY_DISTANCE : 0;
+    const dy = input.keys.down ? PLAYER_KEY_DISTANCE : input.keys.up ? -PLAYER_KEY_DISTANCE : 0;
     if (dx === 0 && dy === 0) return;
     player.setTargetPosition({
-      x: player.playerState.position.x + dx,
-      y: player.playerState.position.y + dy
+      x: player.position.x + dx,
+      y: player.position.y + dy
     });
   }
 

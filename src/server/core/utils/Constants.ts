@@ -7,7 +7,9 @@ export const PLAYER_ATTACK_COOL_DOWN = 200;
 export const PLAYER_HURT_COOL_DOWN = 200;
 export const PLAYER_BASE_HP = 100;
 export const PLAYER_HP_COOLDOWN = 250;
+export const PLAYER_KEY_DISTANCE = 32;
 
+export const GAME_LOOP_INTERVAL = 1000 / 60;
 export const WORLD_RADIUS = 1024;
 
 export const EXPERIENCE_TABLE = [

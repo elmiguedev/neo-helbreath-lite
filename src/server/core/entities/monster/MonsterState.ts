@@ -1,0 +1,1 @@
+export type MonsterState = 'idle' | 'walk' | 'attack' | 'hurt' | 'dead'

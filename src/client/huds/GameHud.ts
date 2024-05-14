@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import { GameState } from "../sockets/domain/GameState";
 import { PlayerStatBar } from "../components/PlayerStatBar";
-import { PlayerStats } from "../../domain/Player";
+import { PlayerStats } from "../sockets/domain/Player";
 import { ToggleButton } from "../components/ToggleButton";
 
 export class GameHud extends Scene {

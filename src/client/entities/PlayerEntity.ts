@@ -1,4 +1,4 @@
-import { Player } from "../../domain/Player";
+import { Player } from "../sockets/domain/Player";
 import { Position } from "../../domain/Position";
 import { StatBar } from "../components/StatBar";
 import { Utils } from "../utils/Utils";

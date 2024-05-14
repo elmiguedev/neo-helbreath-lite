@@ -3,19 +3,24 @@ import http from "http";
 import { Socket, Server as SocketServer } from "socket.io";
 import path from "path";
 import { CreatePlayerAction } from "./core/actions/CreatePlayerAction";
-import { GameStateEvent } from "./core/events/GameStateEvent";
 import { RemovePlayerAction } from "./core/actions/RemovePlayerAction";
-import { GameState } from "../domain/GameState";
-import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_KEYS_MOVE_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "../domain/Messages";
+import {
+  PLAYER_ATTACK_MESSAGE,
+  PLAYER_CANCEL_MESSAGE,
+  PLAYER_DISCONNECTED_MESSAGE,
+  PLAYER_KEYS_MOVE_MESSAGE,
+  PLAYER_MOVE_MESSAGE,
+  PLAYER_STATS_UPDATE_MESSAGE
+} from "./delivery/Messages";
 import { PlayerMoveAction } from "./core/actions/PlayerMoveAction";
-import { Position } from "../domain/Position";
-import { UpdatePlayersAction } from "./core/actions/UpdatePlayersAction";
-import { PlayerAttackAction, PlayerAttackActionParams } from "./core/actions/PlayerAttackAction";
+import { PlayerAttackAction } from "./core/actions/PlayerAttackAction";
 import { PlayerCancelAction } from "./core/actions/PlayerCancelAction";
 import { PlayerStatUpdateAction } from "./core/actions/PlayerStatUpdateAction";
-import { PlayerStats } from "../domain/Player";
+import { PlayerStats } from "../client/sockets/domain/Player";
 import { PlayerMoveKeysAction } from "./core/actions/PlayerMoveKeysAction";
-import { MonsterEntity } from "./core/entities/MonsterEntity";
+import { Game } from "./core/Game";
+import { GameStateNotifier } from "./delivery/notifiers/GameStateNotifier";
+import { Position } from "./core/entities/Poisition";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -28,37 +33,19 @@ const socketServer = new SocketServer(server, {
 });
 
 
-// creamos las dependencias del servidor
-const gameState: GameState = {
-  players: {},
-  monsters: {
-    "chobi": new MonsterEntity({
-      attackDieCount: 1,
-      attackDieSides: 8,
-      ca: 5,
-      hp: 20,
-      id: "chobi",
-      maxExperience: 300,
-      minExperience: 100,
-      maxHp: 20,
-      name: "Chobi",
-      position: { x: 225, y: 225 },
-      state: "idle",
-      type: "chobi"
-    })
-  }
-}
+const game = new Game();
 
-const createPlayerAction = new CreatePlayerAction(gameState);
-const removePlayerAction = new RemovePlayerAction(gameState);
-const playerMoveAction = new PlayerMoveAction(gameState);
-const updatePlayersAction = new UpdatePlayersAction(gameState);
-const playerAttackAction = new PlayerAttackAction(gameState);
-const playerCancelAction = new PlayerCancelAction(gameState);
-const playerStatUpdateAction = new PlayerStatUpdateAction(gameState);
-const playerMoveKeysAction = new PlayerMoveKeysAction(gameState);
+const createPlayerAction = new CreatePlayerAction(game);
+const playerAttackAction = new PlayerAttackAction(game);
+const removePlayerAction = new RemovePlayerAction(game);
+const playerMoveAction = new PlayerMoveAction(game);
+const playerCancelAction = new PlayerCancelAction(game);
+const playerMoveKeysAction = new PlayerMoveKeysAction(game);
+const playerStatUpdateAction = new PlayerStatUpdateAction(game);
 
-const gameStateEvent = new GameStateEvent(gameState);
+// const gameStateEvent = new GameStateEvent(gameState);
+const gameStateNotifier = new GameStateNotifier(socketServer);
+game.addGameStateListener(gameStateNotifier);
 
 // creamos la conexion por socket
 socketServer.on("connection", (socket: Socket) => {
@@ -93,26 +80,16 @@ socketServer.on("connection", (socket: Socket) => {
     });
   });
 
-  socket.on(PLAYER_STATS_UPDATE_MESSAGE, (stats: PlayerStats) => {
+  socket.on(PLAYER_STATS_UPDATE_MESSAGE, (attributes: PlayerStats) => {
     playerStatUpdateAction.execute({
       playerId: socket.id,
-      stats
+      attributes
     });
   });
 
 });
 
-setInterval(() => {
-  updatePlayersAction.execute();
-  socketServer.emit(GAME_STATE_MESSAGE, gameStateEvent.execute());
-}, 1000 / 60);
-
-
-
-
-
-
-
+game.startLoop();
 
 
 // creamos endpoints de api

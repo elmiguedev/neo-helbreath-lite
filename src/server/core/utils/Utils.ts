@@ -1,4 +1,4 @@
-import { Position } from "../../../domain/Position"
+import { Position } from "../entities/Poisition"
 
 const getRandomHexColor = (): number => {
   return Math.floor(Math.random() * 16777215)

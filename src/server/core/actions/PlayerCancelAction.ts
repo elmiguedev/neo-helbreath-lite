@@ -1,15 +1,14 @@
-import { GameState } from "../../../domain/GameState";
+import { Game } from "../Game";
 import { Action } from "./Action";
 
 export class PlayerCancelAction implements Action<string, void> {
   constructor(
-    private readonly gameState: GameState
+    private readonly game: Game
   ) { }
+
   public execute(playerId: string): void {
-    const player = this.gameState.players[playerId];
-    if (player && !player.isDead()) {
-      player.setState("idle");
-      player.setTargetPosition(undefined);
-    }
+    const player = this.game.players[playerId];
+    if (!player) return;
+    player.stopMovement();
   }
 }

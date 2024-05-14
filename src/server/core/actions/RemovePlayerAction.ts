@@ -1,4 +1,4 @@
-import { GameState } from "../../../domain/GameState";
+import { Game } from "../Game";
 import { Action } from "./Action";
 
 export interface RemovePlayerActionParams {
@@ -6,9 +6,9 @@ export interface RemovePlayerActionParams {
 }
 
 export class RemovePlayerAction implements Action<RemovePlayerActionParams, void> {
-  constructor(private readonly gameState: GameState) { }
+  constructor(private readonly game: Game) { }
 
   public execute(input: RemovePlayerActionParams): void {
-    delete this.gameState.players[input.id];
+    this.game.removePlayer(input.id);
   }
 }

@@ -1,28 +1,22 @@
-import { GameState } from "../../../domain/GameState";
-import { PlayerState, PlayerStats } from "../../../domain/Player";
+import { Game } from "../Game";
+import { PlayerAttributes } from "../entities/player/PlayerAttributes";
 import { Action } from "./Action";
 
 export interface PlayerStatUpdateActionProps {
   playerId: string;
-  stats: PlayerStats;
+  attributes: PlayerAttributes;
 }
 
 export class PlayerStatUpdateAction implements Action<PlayerStatUpdateActionProps, void> {
   constructor(
-    private readonly gameState: GameState
+    private readonly game: Game
   ) { }
 
   public execute(params: PlayerStatUpdateActionProps): void {
-    const player = this.gameState.players[params.playerId];
+    const player = this.game.players[params.playerId];
     if (!player) return;
-    if (!player.canUpdateStats()) return;
-    if (this.getTotalPoints(params.stats) === 0) return;
-    if (this.getTotalPoints(params.stats) > player.getAvailablePoints()) return;
-
-    player.updateStats(params.stats);
+    player.updateAttributes(params.attributes);
   }
 
-  private getTotalPoints(stats: PlayerStats) {
-    return Object.values(stats).reduce((a, b) => a + b, 0);
-  }
+
 }

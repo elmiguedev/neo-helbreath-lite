@@ -1,4 +1,4 @@
-import { Position } from "./Position";
+import { Position } from "./Poisition";
 
 export type PlayerState = 'walk' | 'idle' | 'attack' | 'hurt' | 'dead' | 'absorb';
 
@@ -22,8 +22,8 @@ export interface Player {
   targetPosition?: Position;
   hasEnemiTarget: boolean;
   state: PlayerState;
-  score: number;
   stats: PlayerStats;
+  score: number;
   level: number;
   experience: number;
   nextLevelExperience: number;

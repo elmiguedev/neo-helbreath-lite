@@ -1,12 +1,12 @@
 import io, { Socket } from "socket.io-client";
 import { GameStateHandler } from "./handlers/GameStateHandler";
-import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_KEYS_MOVE_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "../../domain/Messages";
+import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_KEYS_MOVE_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "./Messages";
 import { Position } from "../../domain/Position";
 import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler";
 import { PlayerEntity } from "../entities/PlayerEntity";
 import { Scene } from "phaser";
 import { GameHud } from "../huds/GameHud";
-import { PlayerStats } from "../../domain/Player";
+import { PlayerStats } from "./domain/Player";
 import { MonsterEntity } from "../entities/MonsterEntity";
 import { Utils } from "../utils/Utils";
 
