@@ -84,6 +84,14 @@ const throwDice = (count: number, faces: number) => {
   return sum;
 }
 
+const fixProbability = (probability: number, min: number, max: number) => {
+  return Math.max(min, Math.min(max, probability));
+}
+
+const getIntegerBetween = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 export const Utils = {
   getRandomHexColor,
   getRandomPositionByRadius,
@@ -93,5 +101,7 @@ export const Utils = {
   distanceBetweenPoints,
   distanceBetween,
   throwDice,
-  moveTowardsTarget
+  moveTowardsTarget,
+  fixProbability,
+  getIntegerBetween
 }

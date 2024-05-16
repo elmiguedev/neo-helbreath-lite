@@ -15,7 +15,7 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
     const player = new Player({
       id: input.id,
       name: input.name,
-      color: Utils.getRandomHexColor()
+      worldMapId: "testMap"
     });
     this.game.addPlayer(player);
   }

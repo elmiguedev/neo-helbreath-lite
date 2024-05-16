@@ -1,25 +1,20 @@
 import { Position } from "../Poisition";
+import { Size } from "../Size";
 import { PlayerAttributes } from "./PlayerAttributes";
 import { PlayerControlParams } from "./PlayerControlParams";
+import { PlayerSkills } from "./PlayerSkills";
 import { PlayerState } from "./PlayerState";
+import { PlayerStats } from "./PlayerStats";
 
 export interface PlayerGameState {
   id: string;
   name: string;
-  color: number;
-  hp: number;
-  maxHp: number;
+  worldMapId: string;
+  bounds: Size;
+  attributes: PlayerAttributes;
+  stats: PlayerStats;
   position: Position;
   targetPosition?: Position;
-  hasEnemiTarget: boolean;
   state: PlayerState;
-  stats: PlayerAttributes;
-  score: number;
-  level: number;
-  experience: number;
-  nextLevelExperience: number;
-  armorClass: number;
-  availablePoints: number;
-  hpCoolDown: number;
-  control: PlayerControlParams;
+  skills: PlayerSkills;
 }

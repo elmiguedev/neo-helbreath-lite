@@ -5,7 +5,7 @@ import path from "path";
 import { CreatePlayerAction } from "./core/actions/CreatePlayerAction";
 import { RemovePlayerAction } from "./core/actions/RemovePlayerAction";
 import {
-  PLAYER_ATTACK_MESSAGE,
+  PLAYER_ATTACK_MONSTER_MESSAGE,
   PLAYER_CANCEL_MESSAGE,
   PLAYER_DISCONNECTED_MESSAGE,
   PLAYER_KEYS_MOVE_MESSAGE,
@@ -13,14 +13,14 @@ import {
   PLAYER_STATS_UPDATE_MESSAGE
 } from "./delivery/Messages";
 import { PlayerMoveAction } from "./core/actions/PlayerMoveAction";
-import { PlayerAttackAction } from "./core/actions/PlayerAttackAction";
+import { PlayerAttackMonsterAction } from "./core/actions/PlayerAttackMonsterAction";
 import { PlayerCancelAction } from "./core/actions/PlayerCancelAction";
 import { PlayerStatUpdateAction } from "./core/actions/PlayerStatUpdateAction";
-import { PlayerStats } from "../client/sockets/domain/Player";
 import { PlayerMoveKeysAction } from "./core/actions/PlayerMoveKeysAction";
 import { Game } from "./core/Game";
 import { GameStateNotifier } from "./delivery/notifiers/GameStateNotifier";
 import { Position } from "./core/entities/Poisition";
+import { PlayerAttributes } from "./core/entities/player/PlayerAttributes";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -36,7 +36,7 @@ const socketServer = new SocketServer(server, {
 const game = new Game();
 
 const createPlayerAction = new CreatePlayerAction(game);
-const playerAttackAction = new PlayerAttackAction(game);
+const playerAttackMonsterAction = new PlayerAttackMonsterAction(game);
 const removePlayerAction = new RemovePlayerAction(game);
 const playerMoveAction = new PlayerMoveAction(game);
 const playerCancelAction = new PlayerCancelAction(game);
@@ -62,10 +62,10 @@ socketServer.on("connection", (socket: Socket) => {
     playerMoveAction.execute({ id: socket.id, position });
   });
 
-  socket.on(PLAYER_ATTACK_MESSAGE, (id: string) => {
-    playerAttackAction.execute({
+  socket.on(PLAYER_ATTACK_MONSTER_MESSAGE, (id: string) => {
+    playerAttackMonsterAction.execute({
       playerId: socket.id,
-      enemyId: id
+      monsterId: id
     });
   });
 
@@ -80,7 +80,7 @@ socketServer.on("connection", (socket: Socket) => {
     });
   });
 
-  socket.on(PLAYER_STATS_UPDATE_MESSAGE, (attributes: PlayerStats) => {
+  socket.on(PLAYER_STATS_UPDATE_MESSAGE, (attributes: PlayerAttributes) => {
     playerStatUpdateAction.execute({
       playerId: socket.id,
       attributes

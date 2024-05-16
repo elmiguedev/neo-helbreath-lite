@@ -1,60 +1,81 @@
-import { EXPERIENCE_TABLE, PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_BASE_ARMOR_CLASS, PLAYER_BASE_HP, PLAYER_EK_SCORE, PLAYER_HIT_SCORE, PLAYER_HP_COOLDOWN, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED, WORLD_RADIUS } from "../../utils/Constants";
+import { PLAYER_EXPERIENCE_ARRAY, PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_BASE_ARMOR_CLASS, PLAYER_BASE_HP, PLAYER_BASE_TILESIZE, PLAYER_EK_SCORE, PLAYER_HIT_SCORE, PLAYER_HP_COOLDOWN, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED, WORLD_RADIUS, PLAYER_HIT_RATIO_FACTOR, PLAYER_CHANCE_TO_HIT_FACTOR, PLAYER_CHANCE_TO_HIT_MIN, PLAYER_CHANCE_TO_HIT_MAX, PLAYER_DAMAGE_BONUS_FACTOR, PLAYER_LEVEL_POINTS } from "../../utils/Constants";
 import { Utils } from "../../utils/Utils";
 import { Entity } from "../Entity";
 import { Position } from "../Poisition";
+import { Size } from "../Size";
+import { Monster } from "../monster/Monster";
 import { PlayerAttributes } from "./PlayerAttributes";
 import { PlayerControlParams } from "./PlayerControlParams";
 import { PlayerGameState } from "./PlayerGameState";
+import { PlayerSkills } from "./PlayerSkills";
 import { PlayerState } from "./PlayerState";
 import { PlayerStats } from "./PlayerStats";
 
 export interface PlayerProps {
   id: string;
   name: string;
-  color: number;
+  worldMapId: string;
 }
 
 export class Player implements Entity {
   public id: string;
-  public position: Position;
   private name: string;
-  private color: number;
+  private bounds: Size;
+  private worldMapId: string;
   private stats: PlayerStats;
   private attributes: PlayerAttributes;
+  private skills: PlayerSkills;
   private controlParams: PlayerControlParams;
+  public position: Position;
   private targetPosition?: Position;
   private state: PlayerState;
 
   constructor(props: PlayerProps) {
     this.id = props.id;
     this.name = props.name;
-    this.color = props.color;
+    this.worldMapId = props.worldMapId;
+    this.bounds = {
+      width: PLAYER_BASE_TILESIZE,
+      height: PLAYER_BASE_TILESIZE
+    };
     this.attributes = {
-      dextery: 1,
-      strength: 1,
-      vitality: 1
+      vitality: 20,
+      charisma: 10,
+      dexterity: 30,
+      strength: 17,
+      intelligence: 10,
+      magic: 10,
     };
     this.controlParams = {
       hpCoolDown: 0,
       hasEnemiTarget: false
     };
     this.stats = {
-      maxHp: 100,
-      hp: 100,
-      score: 0,
-      level: 1,
-      experience: EXPERIENCE_TABLE[1],
-      nextLevelExperience: EXPERIENCE_TABLE[2],
-      armorClass: PLAYER_BASE_ARMOR_CLASS,
-      availablePoints: 0,
+      experience: 14565,
+      health: 122,
+      level: 20,
+      mana: 67,
+      maxHealth: 122,
+      maxMana: 67,
+      maxStamina: 122,
+      stamina: 122,
+      availableAttributesPoints: 3,
+      nextLevelExperience: 14724,
+      baseLevelExperience: 13001,
       hpCoolDown: PLAYER_HP_COOLDOWN,
     };
     this.position = {
-      x: 0,
-      y: 0
+      x: 5000,
+      y: 6000
     };
     this.state = 'idle';
-
+    this.skills = {
+      axe: 100,
+      hammer: 100,
+      longSword: 100,
+      shortSword: 100,
+      staff: 100
+    }
 
   }
 
@@ -67,23 +88,24 @@ export class Player implements Entity {
     return {
       id: this.id,
       name: this.name,
-      color: this.color,
-      hp: this.stats.hp,
-      maxHp: this.stats.maxHp,
+      worldMapId: this.worldMapId,
+      bounds: this.bounds,
+      attributes: this.attributes,
+      stats: this.stats,
       position: this.position,
       targetPosition: this.targetPosition,
-      hasEnemiTarget: this.controlParams.hasEnemiTarget,
       state: this.state,
-      stats: this.attributes,
-      score: this.stats.score,
-      level: this.stats.level,
-      experience: this.stats.experience,
-      nextLevelExperience: this.stats.nextLevelExperience,
-      armorClass: this.stats.armorClass,
-      availablePoints: this.stats.availablePoints,
-      hpCoolDown: this.controlParams.hpCoolDown,
-      control: this.controlParams
+      skills: this.skills,
     }
+  }
+
+  // getters
+  // ---------------------------------------
+
+  public get hitRatio(): number {
+    return this.attributes.dexterity >= 50
+      ? this.skills.shortSword + (this.attributes.dexterity - 50) * PLAYER_HIT_RATIO_FACTOR
+      : this.skills.shortSword;
   }
 
   // public methods
@@ -92,20 +114,39 @@ export class Player implements Entity {
   public attackPlayer(enemy: Player) {
     if (!this.canAttack() || enemy.isDead()) return;
 
-    if (this.isInAttackRange(enemy.position)) {
+    // TODO: cuando hagamos el ataque a otro player
+    //       ya lo tenemos listo, pero falta el calculo de la cosa de armadura
+    //
+    // if (this.isInAttackRange(enemy.position)) {
+    //   this.setAttackMode();
+    //   if (this.canHit(enemy.stats.armorClass)) {
+    //     const damage = this.getDamage();
+    //     enemy.hurt(damage);
+    //     this.increaseScore(PLAYER_HIT_SCORE);
+    //     if (enemy.isDead()) {
+    //       this.increaseScore(PLAYER_EK_SCORE);
+    //       this.increaseExperience(enemy.stats.experience)
+    //     }
+    //   }
+    // }
+    // else {
+    //   this.followPlayer(enemy);
+    // }
+  }
+
+  public attackMonster(monster: Monster) {
+    if (!this.canAttack() || monster.isDead()) return;
+    if (this.isInAttackRange(monster.position)) {
       this.setAttackMode();
-      if (this.canHit(enemy.stats.armorClass)) {
-        const damage = this.getDamage();
-        enemy.hurt(damage);
-        this.increaseScore(PLAYER_HIT_SCORE);
-        if (enemy.isDead()) {
-          this.increaseScore(PLAYER_EK_SCORE);
-          this.increaseExperience(enemy.stats.experience)
+      if (this.canHit(monster.stats.defenseRatio)) {
+        const damage = this.getDamage(monster.stats.physicalAbsortion);
+        monster.hurt(damage);
+        if (monster.isDead()) {
+          this.increaseExperience(monster.getExperience());
         }
       }
-    }
-    else {
-      this.followPlayer(enemy);
+    } else {
+      this.followMonster(monster);
     }
   }
 
@@ -120,8 +161,8 @@ export class Player implements Entity {
   }
 
   public hurt(damage: number) {
-    this.stats.hp -= damage;
-    if (this.stats.hp > 0) {
+    this.stats.health -= damage;
+    if (this.stats.health > 0) {
       this.setHurtMode();
     } else {
       this.kill();
@@ -142,12 +183,16 @@ export class Player implements Entity {
   public updateAttributes(attributes: PlayerAttributes) {
     const totalPoints = this.getTotalPoints(attributes);
     if (totalPoints === 0) return;
-    if (totalPoints > this.stats.availablePoints) return;
+    if (totalPoints > this.stats.availableAttributesPoints) return;
 
-    this.attributes.dextery += attributes.dextery;
+    this.attributes.dexterity += attributes.dexterity;
     this.attributes.strength += attributes.strength;
     this.attributes.vitality += attributes.vitality;
-    this.stats.availablePoints -= totalPoints;
+    this.attributes.charisma += attributes.charisma;
+    this.attributes.intelligence += attributes.intelligence;
+    this.attributes.magic += attributes.magic;
+
+    this.stats.availableAttributesPoints -= totalPoints;
 
     this.recalculateStats();
   }
@@ -163,7 +208,7 @@ export class Player implements Entity {
     this.controlParams.hpCoolDown++;
     if (this.controlParams.hpCoolDown > this.stats.hpCoolDown) {
       this.controlParams.hpCoolDown = 0;
-      this.recoverHp();
+      this.recoverHealth();
     }
   }
 
@@ -192,21 +237,32 @@ export class Player implements Entity {
     }, PLAYER_HURT_COOL_DOWN);
   }
 
-  private canHit(armorClass: number) {
-    const hitRoll = Utils.throwDice(1, 20);
-    return hitRoll + this.attributes.dextery >= armorClass
+  private canHit(enemyDefenseRatio: number): boolean {
+    const chanceToHit = (this.hitRatio / enemyDefenseRatio) * PLAYER_CHANCE_TO_HIT_FACTOR;
+    const finalHitChange = Utils.fixProbability(
+      chanceToHit,
+      PLAYER_CHANCE_TO_HIT_MIN,
+      PLAYER_CHANCE_TO_HIT_MAX
+    )
+    const attackThrow = Math.random();
+    return attackThrow <= finalHitChange;
   }
 
-  private getDamage() {
-    return Utils.throwDice(2, 8) + this.attributes.strength
+  private getDamage(enemyPhysicalAbsortion: number = 0) {
+    // Damage = weapon damage + str bonus (20% when str >= 100 or 40% if str >= 200)
+    // Mock: using a Gladius sword
+    const weaponDamage = 4;
+    const strBonus = this.attributes.strength >= 100 ? weaponDamage * PLAYER_DAMAGE_BONUS_FACTOR : 0
+    const damage = weaponDamage + strBonus
+
+    console.log("Player weapon damage", weaponDamage)
+    console.log("Player damage: ", damage);
+
+    return damage - (damage * (enemyPhysicalAbsortion / 100));
   }
 
   private kill() {
     this.state = "dead";
-  }
-
-  private increaseScore(score: number) {
-    this.stats.score += score
   }
 
   private increaseExperience(value: number) {
@@ -217,9 +273,9 @@ export class Player implements Entity {
   private validateNewLevel() {
     if (this.stats.experience >= this.stats.nextLevelExperience) {
       this.stats.level += 1;
-      this.stats.nextLevelExperience = EXPERIENCE_TABLE[this.stats.level + 1];
-      this.stats.availablePoints += 1;
-      this.stats.hp += Math.floor(this.stats.hp / 2);
+      this.stats.nextLevelExperience = PLAYER_EXPERIENCE_ARRAY[this.stats.level + 1];
+      this.stats.availableAttributesPoints += PLAYER_LEVEL_POINTS;
+      this.stats.health += Math.floor(this.stats.health / 2);
       this.validateNewLevel();
     }
   }
@@ -229,13 +285,19 @@ export class Player implements Entity {
     this.controlParams.hasEnemiTarget = true;
   }
 
+  private followMonster(monster: Monster) {
+    this.targetPosition = monster.position;
+    this.controlParams.hasEnemiTarget = true;
+  }
+
   private getTotalPoints(attributes: PlayerAttributes) {
     return Object.values(attributes).reduce((a, b) => a + b, 0);
   }
 
   private recalculateStats() {
-    this.stats.maxHp = PLAYER_BASE_HP
-      + (this.attributes.vitality * 6);
+    // TODO: cuando veamos como recalcula la HP en base a la vitality
+    // this.stats.maxHp = PLAYER_BASE_HP
+    //   + (this.attributes.vitality * 6);
   }
 
   private canMove(): boolean {
@@ -284,15 +346,16 @@ export class Player implements Entity {
       this.position = { x: WORLD_RADIUS, y: this.position.y };
   }
 
-  private increaseHp(value: number) {
-    this.stats.hp += value;
-    if (this.stats.hp > this.stats.maxHp) {
-      this.stats.hp = this.stats.maxHp
+  private increaseHealth(value: number) {
+    this.stats.health += value;
+    if (this.stats.health > this.stats.maxHealth) {
+      this.stats.health = this.stats.maxHealth
     }
   }
 
-  private recoverHp() {
-    this.increaseHp(
+  private recoverHealth() {
+    this.increaseHealth(
+      // TODO: ver como era el calculo
       2 + (this.attributes.vitality * 5)
     )
   }
