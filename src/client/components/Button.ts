@@ -17,9 +17,9 @@ export class Button extends Phaser.GameObjects.Container {
   }
 
   private createInputText() {
-    const BASE_COLOR = "#cf53cf";
-    const OVER_COLOR = "#ff65ed";
-    const CLICKED_COLOR = "#ff85f1"
+    const BASE_COLOR = "#847e87";
+    const OVER_COLOR = "#928f94";
+    const CLICKED_COLOR = "#787579"
 
     this.button = document.createElement("button");
     this.button.style.width = "214px";
