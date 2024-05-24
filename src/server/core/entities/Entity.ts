@@ -1,3 +1,5 @@
+import { Game } from "../Game";
+
 export interface Entity {
-  update(): void;
+  update(game: Game): void;
 }

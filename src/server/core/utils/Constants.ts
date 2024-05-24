@@ -12,6 +12,8 @@ export const PLAYER_CHANCE_TO_HIT_MAX = 0.9
 export const PLAYER_DAMAGE_BONUS_FACTOR = 0.2;
 export const PLAYER_LEVEL_POINTS = 3;
 
+
+
 export const GAME_LOOP_INTERVAL = 1000 / 60;
 
 export const PLAYER_HIT_SCORE = 1;

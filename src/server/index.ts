@@ -21,6 +21,7 @@ import { Game } from "./core/Game";
 import { GameStateNotifier } from "./delivery/notifiers/GameStateNotifier";
 import { Position } from "./core/entities/Poisition";
 import { PlayerAttributes } from "./core/entities/player/PlayerAttributes";
+import { CreateWorldMapsAction } from "./core/actions/CreateWorldMapsAction";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -35,6 +36,7 @@ const socketServer = new SocketServer(server, {
 
 const game = new Game();
 
+const createWorldMapsAction = new CreateWorldMapsAction(game);
 const createPlayerAction = new CreatePlayerAction(game);
 const playerAttackMonsterAction = new PlayerAttackMonsterAction(game);
 const removePlayerAction = new RemovePlayerAction(game);
@@ -44,6 +46,8 @@ const playerMoveKeysAction = new PlayerMoveKeysAction(game);
 const playerStatUpdateAction = new PlayerStatUpdateAction(game);
 
 // const gameStateEvent = new GameStateEvent(gameState);
+createWorldMapsAction.execute();
+
 const gameStateNotifier = new GameStateNotifier(socketServer);
 game.addGameStateListener(gameStateNotifier);
 

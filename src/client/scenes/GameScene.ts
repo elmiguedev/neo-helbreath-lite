@@ -1,14 +1,16 @@
 import { Scene } from "phaser";
 import { SocketManager } from "../sockets/SocketManager";
-import { PlayerEntity } from "../entities/PlayerEntity";
-import { MonsterEntity } from "../entities/MonsterEntity"
+import { PlayerEntity } from "../entities/player/PlayerEntity";
+import { MonsterEntity } from "../entities/monster/MonsterEntity"
 import { GameHud } from "../huds/GameHud";
+import { WorldMapEntity } from "../entities/worldmap/WorldMapEntity";
 
 export class GameScene extends Scene {
+  private playerName: string;
   private socketManager: SocketManager;
   private players: Record<string, PlayerEntity> = {};
   private monsters: Record<string, MonsterEntity> = {};
-  private playerName: string;
+  private worldMap: WorldMapEntity;
   private gameHud: GameHud;
 
   private keys: {
@@ -28,9 +30,9 @@ export class GameScene extends Scene {
 
   create() {
     this.createGameHud();
+    this.createWorldMap();
     this.createSocketManager();
     this.createBackground();
-    // this.createMusic();
     this.createInput();
     this.createKeyInputs();
   }
@@ -41,21 +43,24 @@ export class GameScene extends Scene {
     this.checkKeyInput();
   }
 
-  createSocketManager() {
+  // creation methods
+  // -----------------------------------------
+
+  private createSocketManager() {
     this.players = {}
     this.monsters = {}
     this.socketManager = new SocketManager(
       this,
       this.players,
       this.monsters,
+      this.worldMap,
       this.playerName,
       this.gameHud
     );
   }
 
   private createBackground() {
-    this.cameras.main.setBackgroundColor(0xffffff)
-    this.add.grid(0, 0, 2048, 2048, 32, 32, 0xffffff, 1, 0xeeeeee).setDepth(-3000);
+    this.cameras.main.setBackgroundColor(0x90c18a)
   }
 
   private createInput() {
@@ -109,6 +114,18 @@ export class GameScene extends Scene {
     }
   }
 
+  private createGameHud() {
+    this.scene.run("GameHud");
+    this.gameHud = this.scene.get("GameHud") as GameHud;
+  }
+
+  private createWorldMap() {
+    this.worldMap = new WorldMapEntity(this);
+  }
+
+  // update and check methods
+  // -----------------------------------------
+
   private checkKeyInput() {
     const player = this.getMainPlayer();
     if (player) {
@@ -135,18 +152,8 @@ export class GameScene extends Scene {
     }
   }
 
-  private createMusic() {
-    this.sound.stopAll();
-    this.sound.play("game", {
-      loop: true,
-      volume: 0.2
-    });
-  }
-
-  private createGameHud() {
-    this.scene.run("GameHud");
-    this.gameHud = this.scene.get("GameHud") as GameHud;
-  }
+  // player methods
+  // ----------------------------------------
 
   private getMainPlayer() {
     if (this.socketManager.getId()) {

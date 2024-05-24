@@ -1,6 +1,5 @@
 import { Game } from "../Game";
 import { Player } from "../entities/player/Player";
-import { Utils } from "../utils/Utils";
 import { Action } from "./Action";
 
 export interface CreatePlayerActionParams {
@@ -15,7 +14,7 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
     const player = new Player({
       id: input.id,
       name: input.name,
-      worldMapId: "testMap"
+      worldMapId: "test"
     });
     this.game.addPlayer(player);
   }

@@ -1,4 +1,4 @@
-import { PlayerEntity } from "../../entities/PlayerEntity";
+import { PlayerEntity } from "../../entities/player/PlayerEntity";
 
 export class PlayerDisconnectedHandler {
   constructor(private readonly players: Record<string, PlayerEntity>) {

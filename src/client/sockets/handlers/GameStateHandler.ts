@@ -1,9 +1,10 @@
-import { PlayerEntity } from "../../entities/PlayerEntity";
+import { PlayerEntity } from "../../entities/player/PlayerEntity";
 import { Scene } from "phaser";
 import { SocketManager } from "../SocketManager";
 import { GameHud } from "../../huds/GameHud";
 import { GameState } from "../domain/GameState";
-import { MonsterEntity } from "../../entities/MonsterEntity";
+import { MonsterEntity } from "../../entities/monster/MonsterEntity";
+import { WorldMapEntity } from "../../entities/worldmap/WorldMapEntity";
 
 export class GameStateHandler {
 
@@ -14,6 +15,7 @@ export class GameStateHandler {
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>,
     private readonly monsters: Record<string, MonsterEntity>,
+    private readonly worldMap: WorldMapEntity,
     private readonly gameHud: GameHud
   ) { }
 
@@ -27,6 +29,13 @@ export class GameStateHandler {
         if (key === this.socketManager.getId()) {
           this.players[key].setMainPlayer(true);
           this.scene.cameras.main.startFollow(this.players[key]);
+          this.worldMap.changeMap(player.worldMapId);
+
+
+
+          // _________________________
+
+
           this.players[key].onDie = () => {
             this.socketManager.disconnect();
             this.scene.scene.stop("GameHud");
@@ -43,26 +52,37 @@ export class GameStateHandler {
           }
         }
       } else {
+        if (key === this.socketManager.getId()) {
+          // LO NUEVO DE LOS PORTALES
+
+          const oldPlayer = this.players[key];
+          const oldWorldMapId = oldPlayer.getPlayerState().worldMapId;
+          const newWorldMapId = player.worldMapId;
+
+          if (oldWorldMapId !== newWorldMapId) {
+            this.worldMap.changeMap(newWorldMapId);
+          }
+        }
         if (this.players[key])
           this.players[key].setPlayerState(player);
       }
     });
 
-    Object.keys(gameState.monsters).forEach((key) => {
-      const monster = gameState.monsters[key];
-      if (!this.monsters[key]) {
-        this.monsters[key] = new MonsterEntity(this.scene, monster);
-        this.monsters[key].onDie = () => {
-          if (this.monsters[key]) {
-            this.monsters[key].destroy();
-          }
-          delete this.monsters[key];
-        }
-      } else {
-        if (this.monsters[key])
-          this.monsters[key].setMonsterState(monster);
-      }
-    });
+    // Object.keys(gameState.monsters).forEach((key) => {
+    //   const monster = gameState.monsters[key];
+    //   if (!this.monsters[key]) {
+    //     this.monsters[key] = new MonsterEntity(this.scene, monster);
+    //     this.monsters[key].onDie = () => {
+    //       if (this.monsters[key]) {
+    //         this.monsters[key].destroy();
+    //       }
+    //       delete this.monsters[key];
+    //     }
+    //   } else {
+    //     if (this.monsters[key])
+    //       this.monsters[key].setMonsterState(monster);
+    //   }
+    // });
 
   }
 

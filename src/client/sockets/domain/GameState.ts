@@ -1,7 +1,6 @@
-import { Monster } from "./Monster"
-import { Player } from "./Player"
+import { PlayerGameState } from "./player/PlayerGameState"
 
 export interface GameState {
-  players: Record<string, Player>
-  monsters: Record<string, Monster>
+  players: Record<string, PlayerGameState>
+  // monsters: Record<string, MonsterGame>
 }

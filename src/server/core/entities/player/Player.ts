@@ -1,9 +1,11 @@
+import { Game } from "../../Game";
 import { PLAYER_EXPERIENCE_ARRAY, PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_BASE_ARMOR_CLASS, PLAYER_BASE_HP, PLAYER_BASE_TILESIZE, PLAYER_EK_SCORE, PLAYER_HIT_SCORE, PLAYER_HP_COOLDOWN, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED, WORLD_RADIUS, PLAYER_HIT_RATIO_FACTOR, PLAYER_CHANCE_TO_HIT_FACTOR, PLAYER_CHANCE_TO_HIT_MIN, PLAYER_CHANCE_TO_HIT_MAX, PLAYER_DAMAGE_BONUS_FACTOR, PLAYER_LEVEL_POINTS } from "../../utils/Constants";
 import { Utils } from "../../utils/Utils";
 import { Entity } from "../Entity";
 import { Position } from "../Poisition";
 import { Size } from "../Size";
 import { Monster } from "../monster/Monster";
+import { WorldMap } from "../worldmap/WorldMap";
 import { PlayerAttributes } from "./PlayerAttributes";
 import { PlayerControlParams } from "./PlayerControlParams";
 import { PlayerGameState } from "./PlayerGameState";
@@ -65,8 +67,8 @@ export class Player implements Entity {
       hpCoolDown: PLAYER_HP_COOLDOWN,
     };
     this.position = {
-      x: 5000,
-      y: 6000
+      x: 3500,
+      y: 3500
     };
     this.state = 'idle';
     this.skills = {
@@ -79,9 +81,10 @@ export class Player implements Entity {
 
   }
 
-  public update() {
+  public update(game: Game) {
     this.updatePosition();
     this.updateHp();
+    this.checkPortal(game);
   }
 
   public getGamePlayerState(): PlayerGameState {
@@ -201,7 +204,6 @@ export class Player implements Entity {
     if (!this.canMove()) return;
     this.state = "walk"
     this.advancePosition();
-    this.validateWorldBounds();
   }
 
   public updateHp() {
@@ -335,17 +337,6 @@ export class Player implements Entity {
       : PLAYER_MAX_SPEED
   }
 
-  private validateWorldBounds() {
-    if (this.position.y <= -WORLD_RADIUS)
-      this.position = { x: this.position.x, y: -WORLD_RADIUS };
-    if (this.position.x <= -WORLD_RADIUS)
-      this.position = { x: -WORLD_RADIUS, y: this.position.y };
-    if (this.position.y >= WORLD_RADIUS)
-      this.position = { x: this.position.x, y: WORLD_RADIUS };
-    if (this.position.x >= WORLD_RADIUS)
-      this.position = { x: WORLD_RADIUS, y: this.position.y };
-  }
-
   private increaseHealth(value: number) {
     this.stats.health += value;
     if (this.stats.health > this.stats.maxHealth) {
@@ -358,5 +349,20 @@ export class Player implements Entity {
       // TODO: ver como era el calculo
       2 + (this.attributes.vitality * 5)
     )
+  }
+
+  private checkPortal(game: Game) {
+    const worldMap = game.getWorldMapById(this.worldMapId);
+    if (worldMap) {
+      const portal = worldMap.getPortalByPosition(
+        this.position
+      );
+      if (portal) {
+        this.worldMapId = portal.target.worldMapId;
+        this.targetPosition = undefined;
+        this.position = portal.target.position;
+        this.state = 'idle';
+      }
+    }
   }
 }

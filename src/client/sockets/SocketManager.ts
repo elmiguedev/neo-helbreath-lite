@@ -1,14 +1,15 @@
 import io, { Socket } from "socket.io-client";
 import { GameStateHandler } from "./handlers/GameStateHandler";
 import { GAME_STATE_MESSAGE, PLAYER_ATTACK_MESSAGE, PLAYER_CANCEL_MESSAGE, PLAYER_DISCONNECTED_MESSAGE, PLAYER_KEYS_MOVE_MESSAGE, PLAYER_MOVE_MESSAGE, PLAYER_STATS_UPDATE_MESSAGE } from "./Messages";
-import { Position } from "../../domain/Position";
 import { PlayerDisconnectedHandler } from "./handlers/PlayerDisconnectedHandler";
-import { PlayerEntity } from "../entities/PlayerEntity";
+import { PlayerEntity } from "../entities/player/PlayerEntity";
 import { Scene } from "phaser";
 import { GameHud } from "../huds/GameHud";
-import { PlayerStats } from "./domain/Player";
-import { MonsterEntity } from "../entities/MonsterEntity";
+import { MonsterEntity } from "../entities/monster/MonsterEntity";
 import { Utils } from "../utils/Utils";
+import { WorldMapEntity } from "../entities/worldmap/WorldMapEntity";
+import { PlayerAttributes } from "./domain/player/PlayerAttributes";
+import { Position } from "./domain/Poisition";
 
 const DEFAULT_SERVER_URL = "/";
 // @ts-ignore
@@ -23,6 +24,7 @@ export class SocketManager {
     private readonly scene: Scene,
     private readonly players: Record<string, PlayerEntity>,
     private readonly monsters: Record<string, MonsterEntity>,
+    private readonly worldMap: WorldMapEntity,
     private readonly playerName: string,
     private readonly gameHud: GameHud,
   ) {
@@ -33,10 +35,17 @@ export class SocketManager {
     });
     this.socket.on("connect", () => {
       this.gameHud.setPlayerId(this.socket.id!);
-      this.gameHud.onStatUpdate = (stats: PlayerStats) => {
-        this.notifyPlayerStatsUpdate(stats);
+      this.gameHud.onStatUpdate = (attributes: PlayerAttributes) => {
+        this.notifyPlayerStatsUpdate(attributes);
       }
-      this.gameStateHandler = new GameStateHandler(this, this.scene, this.players, this.monsters, this.gameHud);
+      this.gameStateHandler = new GameStateHandler(
+        this,
+        this.scene,
+        this.players,
+        this.monsters,
+        this.worldMap,
+        this.gameHud
+      );
       this.playerDisconnectedHandler = new PlayerDisconnectedHandler(this.players);
       this.socket.on(GAME_STATE_MESSAGE, this.gameStateHandler.execute.bind(this.gameStateHandler));
       this.socket.on(PLAYER_DISCONNECTED_MESSAGE, this.playerDisconnectedHandler.execute.bind(this.playerDisconnectedHandler))
@@ -53,7 +62,7 @@ export class SocketManager {
   }
 
   public notifyPlayerMove(position: Position) {
-    if (this.socket.connected && this.socket.id && !this.gameHud.disableMouseMovement) {
+    if (this.socket.connected && this.socket.id) {
       const player = this.players[this.socket.id];
       if (player) {
         player.setClientTargetPosition(position);
@@ -93,9 +102,9 @@ export class SocketManager {
     }
   }
 
-  public notifyPlayerStatsUpdate(stats: PlayerStats) {
+  public notifyPlayerStatsUpdate(attributes: PlayerAttributes) {
     if (this.socket.connected) {
-      this.socket.emit(PLAYER_STATS_UPDATE_MESSAGE, stats);
+      this.socket.emit(PLAYER_STATS_UPDATE_MESSAGE, attributes);
     }
   }
 

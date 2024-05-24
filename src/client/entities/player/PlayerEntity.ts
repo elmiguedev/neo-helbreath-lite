@@ -1,29 +1,24 @@
-import { Player } from "../sockets/domain/Player";
-import { Position } from "../../domain/Position";
-import { StatBar } from "../components/StatBar";
-import { Utils } from "../utils/Utils";
+import { StatBar } from "../../components/StatBar";
+import { PlayerGameState } from "../../sockets/domain/player/PlayerGameState";
+import { Utils } from "../../utils/Utils";
+import { Position } from "../Poisition";
 
 export class PlayerEntity extends Phaser.GameObjects.Sprite {
-  private playerState: Player;
+  private playerState: PlayerGameState;
   private playerLabel: Phaser.GameObjects.Text;
   private hpBar: StatBar;
-  private hurtSound: Phaser.Sound.BaseSound;
   private mainPlayer: boolean = false;
 
   public onDie?: Function;
 
-
-
-  constructor(scene: Phaser.Scene, playerState: Player) {
+  constructor(scene: Phaser.Scene, playerState: PlayerGameState) {
     super(scene, playerState.position.x, playerState.position.y, "player");
     this.playerState = playerState;
     this.scene.add.existing(this);
-    this.setTint(playerState.color);
     this.anims.createFromAseprite("player");
     this.setInteractive({ cursor: "pointer" });
     this.createLabel();
     this.createHpBar()
-    this.createSounds();
   }
 
   public setMainPlayer(mainPlayer: boolean) {
@@ -43,7 +38,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     return this.playerState.id;
   }
 
-  public setPlayerState(playerState: Player) {
+  public setPlayerState(playerState: PlayerGameState) {
     this.playerState = playerState;
   }
 
@@ -104,9 +99,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     if (this.mainPlayer) {
       this.scene.cameras.main.shake(30, 0.002);
     }
-    if (!this.hurtSound.isPlaying) {
-      this.hurtSound.play({ delay: 0.1 });
-    }
+
     this.play({
       key: "hurt",
       timeScale: 0.3,
@@ -143,7 +136,7 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     if (this.playerLabel && this.playerLabel.active) {
       this.playerLabel.setPosition(this.x, this.y - 80);
       this.playerLabel.setAlign("center");
-      this.playerLabel.setText(`(${this.playerState.level})\n${this.playerState.name}`);
+      this.playerLabel.setText(`(${this.playerState.stats.level})\n${this.playerState.name}`);
       this.playerLabel.setDepth(this.depth);
     }
   }
@@ -152,16 +145,16 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
 
     // 1. si tiene clientTargetPosition quiere decir que queremos
     // predecir la ubicacion
-    this.updateClientPosition();
+    // this.updateClientPosition();
 
 
     // ORIGINAL CODE
     // ----------------
-    // this.setPosition(this.playerState.position.x, this.playerState.position.y);
-    // this.setDepth(this.y);
-    // if (this.playerState.targetPosition) {
-    //   this.setFlipX(this.playerState.targetPosition.x < this.x);
-    // }
+    this.setPosition(this.playerState.position.x, this.playerState.position.y);
+    this.setDepth(this.y);
+    if (this.playerState.targetPosition) {
+      this.setFlipX(this.playerState.targetPosition.x < this.x);
+    }
     // ----------------
     // ORIGINAL CODE
   }
@@ -173,8 +166,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
         x: this.x,
         y: this.y,
         color: 0x00ff00,
-        max: this.playerState.maxHp,
-        value: this.playerState.hp,
+        max: this.playerState.stats.maxHealth,
+        value: this.playerState.stats.health,
       }
     );
     this.hpBar.showLabel();
@@ -184,8 +177,8 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
     if (this.hpBar && this.hpBar.active) {
       this.hpBar.setPosition(this.x - 25, this.y - 40);
       this.hpBar.setDepth(this.depth);
-      this.hpBar.setValue(this.playerState.hp);
-      this.hpBar.setMaxValue(this.playerState.maxHp);
+      this.hpBar.setValue(this.playerState.stats.health);
+      this.hpBar.setMaxValue(this.playerState.stats.maxHealth);
     }
   }
 
@@ -198,10 +191,6 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
       }
     })
 
-  }
-
-  private createSounds() {
-    this.hurtSound = this.scene.sound.add("hurt", { volume: 0.5 });
   }
 
   // LO NUEVO
@@ -279,6 +268,9 @@ export class PlayerEntity extends Phaser.GameObjects.Sprite {
   }
 
   private moveServerPlayer() {
+    // TODO: esto es cuestionable porque cuando 
+    //       por alguna razon no tenga target
+    //      por ejemplo con un portal, no se va a mover
     if (!this.playerState.targetPosition) return;
 
     const position = Utils.moveTowardsTarget(

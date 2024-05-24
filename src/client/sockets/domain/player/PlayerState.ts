@@ -1,0 +1,1 @@
+export type PlayerState = 'walk' | 'idle' | 'attack' | 'hurt' | 'dead' | 'absorb'

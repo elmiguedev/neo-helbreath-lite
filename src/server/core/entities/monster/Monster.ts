@@ -1,3 +1,4 @@
+import { Game } from "../../Game";
 import { PLAYER_BASE_TILESIZE, PLAYER_HURT_COOL_DOWN } from "../../utils/Constants";
 import { Utils } from "../../utils/Utils";
 import { Entity } from "../Entity";
@@ -46,7 +47,7 @@ export class Monster implements Entity {
     };
   }
 
-  public update(): void {
+  public update(game: Game): void {
 
   }
 
