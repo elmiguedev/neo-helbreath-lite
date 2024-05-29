@@ -16,6 +16,9 @@ export class CreatePlayerAction implements Action<CreatePlayerActionParams, void
       name: input.name,
       worldMapId: "test"
     });
-    this.game.addPlayer(player);
+    const worldMap = this.game.getWorldMapById(player.worldMapId);
+    if (!worldMap) return;
+    worldMap.addPlayer(player);
+    worldMap.teleportPlayer(player, player.worldMapId);
   }
 }

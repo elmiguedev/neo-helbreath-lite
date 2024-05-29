@@ -1,10 +1,10 @@
-import { Game } from "../../Game";
 import { PLAYER_BASE_TILESIZE, PLAYER_HURT_COOL_DOWN } from "../../utils/Constants";
 import { Utils } from "../../utils/Utils";
 import { Entity } from "../Entity";
 import { Position } from "../Poisition";
 import { Size } from "../Size";
 import { Player } from "../player/Player";
+import { WorldMap } from "../worldmap/WorldMap";
 import { MonsterGameState } from "./MonsterGameState";
 import { MonsterState } from "./MonsterState";
 import { MonsterStats } from "./MonsterStats";
@@ -47,7 +47,7 @@ export class Monster implements Entity {
     };
   }
 
-  public update(game: Game): void {
+  public update(worldMap: WorldMap): void {
 
   }
 

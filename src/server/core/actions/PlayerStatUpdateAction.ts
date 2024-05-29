@@ -13,7 +13,7 @@ export class PlayerStatUpdateAction implements Action<PlayerStatUpdateActionProp
   ) { }
 
   public execute(params: PlayerStatUpdateActionProps): void {
-    const player = this.game.players[params.playerId];
+    const player = this.game.getPlayerById(params.playerId);
     if (!player) return;
     player.updateAttributes(params.attributes);
   }

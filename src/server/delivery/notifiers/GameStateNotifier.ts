@@ -10,7 +10,10 @@ export class GameStateNotifier implements GameStateListener {
   ) { }
 
   notify(gameState: GameState): void {
-    this.serverSocket.emit(GAME_STATE_MESSAGE, gameState);
+    // this.serverSocket.emit(GAME_STATE_MESSAGE, gameState);
+    this.serverSocket
+      .in(gameState.worldMapId)
+      .emit(GAME_STATE_MESSAGE, gameState);
   }
 
 }

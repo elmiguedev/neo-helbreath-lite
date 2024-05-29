@@ -13,10 +13,10 @@ export class PlayerAttackMonsterAction implements Action<PlayerAttackMonsterActi
   ) { }
 
   public execute(params: PlayerAttackMonsterActionParams): void {
-    const player = this.game.players[params.playerId];
-    const monster = this.game.monsters[params.monsterId];
+    const player = this.game.getPlayerById(params.playerId);
+    const monster = this.game.getMonsterById(params.monsterId);
 
-    if (!player || !monster) return;
+    if (!player || !monster || player.worldMapId !== monster.worldMapId) return;
 
     player.attackMonster(monster);
   }

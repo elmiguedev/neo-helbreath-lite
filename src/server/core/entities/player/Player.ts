@@ -1,4 +1,3 @@
-import { Game } from "../../Game";
 import { PLAYER_EXPERIENCE_ARRAY, PLAYER_ATTACK_COOL_DOWN, PLAYER_ATTACK_DISTANCE, PLAYER_BASE_ARMOR_CLASS, PLAYER_BASE_HP, PLAYER_BASE_TILESIZE, PLAYER_EK_SCORE, PLAYER_HIT_SCORE, PLAYER_HP_COOLDOWN, PLAYER_HURT_COOL_DOWN, PLAYER_MAX_SPEED, WORLD_RADIUS, PLAYER_HIT_RATIO_FACTOR, PLAYER_CHANCE_TO_HIT_FACTOR, PLAYER_CHANCE_TO_HIT_MIN, PLAYER_CHANCE_TO_HIT_MAX, PLAYER_DAMAGE_BONUS_FACTOR, PLAYER_LEVEL_POINTS } from "../../utils/Constants";
 import { Utils } from "../../utils/Utils";
 import { Entity } from "../Entity";
@@ -21,16 +20,16 @@ export interface PlayerProps {
 
 export class Player implements Entity {
   public id: string;
-  private name: string;
-  private bounds: Size;
-  private worldMapId: string;
-  private stats: PlayerStats;
-  private attributes: PlayerAttributes;
-  private skills: PlayerSkills;
-  private controlParams: PlayerControlParams;
+  public name: string;
+  public bounds: Size;
+  public worldMapId: string;
+  public stats: PlayerStats;
+  public attributes: PlayerAttributes;
+  public skills: PlayerSkills;
+  public controlParams: PlayerControlParams;
   public position: Position;
-  private targetPosition?: Position;
-  private state: PlayerState;
+  public targetPosition?: Position;
+  public state: PlayerState;
 
   constructor(props: PlayerProps) {
     this.id = props.id;
@@ -81,10 +80,10 @@ export class Player implements Entity {
 
   }
 
-  public update(game: Game) {
+  public update(worldMap: WorldMap) {
     this.updatePosition();
     this.updateHp();
-    this.checkPortal(game);
+    this.checkPortal(worldMap);
   }
 
   public getGamePlayerState(): PlayerGameState {
@@ -351,18 +350,17 @@ export class Player implements Entity {
     )
   }
 
-  private checkPortal(game: Game) {
-    const worldMap = game.getWorldMapById(this.worldMapId);
-    if (worldMap) {
-      const portal = worldMap.getPortalByPosition(
-        this.position
-      );
-      if (portal) {
-        this.worldMapId = portal.target.worldMapId;
-        this.targetPosition = undefined;
-        this.position = portal.target.position;
-        this.state = 'idle';
-      }
+  private checkPortal(worldMap: WorldMap) {
+    const portal = worldMap.getPortalByPosition(
+      this.position
+    );
+
+    if (portal) {
+      worldMap.teleportPlayer(this, portal.target.worldMapId, this.worldMapId);
+      this.worldMapId = portal.target.worldMapId;
+      this.targetPosition = undefined;
+      this.position = portal.target.position;
+      this.state = 'idle';
     }
   }
 }

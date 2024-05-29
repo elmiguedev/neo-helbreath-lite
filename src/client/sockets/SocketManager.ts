@@ -53,6 +53,7 @@ export class SocketManager {
         this.scene.scene.stop();
         this.scene.scene.start("StartScene", { name: this.playerName });
       });
+      // this.socket.on(PLAYER_DISCONNECTED_MESSAGE, this.playerDisconnectedHandler.execute.bind(this.playerDisconnectedHandler))
     })
 
   }

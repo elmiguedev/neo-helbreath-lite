@@ -7,7 +7,7 @@ export class PlayerCancelAction implements Action<string, void> {
   ) { }
 
   public execute(playerId: string): void {
-    const player = this.game.players[playerId];
+    const player = this.game.getPlayerById(playerId);
     if (!player) return;
     player.stopMovement();
   }

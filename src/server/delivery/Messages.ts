@@ -6,3 +6,4 @@ export const PLAYER_ATTACK_PLAYER_MESSAGE = "player:attack:player";
 export const PLAYER_ATTACK_MONSTER_MESSAGE = "player:attack:monster";
 export const PLAYER_CANCEL_MESSAGE = "player:cancel";
 export const PLAYER_STATS_UPDATE_MESSAGE = "player:stats:update";
+export const PLAYER_TELEPORT_MESSAGE = "player:teleport";

@@ -1,5 +1,5 @@
-import { Game } from "../Game";
+import { WorldMap } from "./worldmap/WorldMap";
 
 export interface Entity {
-  update(game: Game): void;
+  update(worldMap: WorldMap): void;
 }
